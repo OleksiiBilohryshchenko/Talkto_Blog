@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Reset Password</title>
+</head>
+<body>
+
+<h2>Reset Password</h2>
+
+<!-- Display validation/runtime errors (e.g., weak password, invalid token) -->
+<div th:if="${error}">
+    <p th:text="${error}" style="color: red;"></p>
+</div>
+
+<form method="post" th:action="@{/password/reset}">
+    <input type="hidden" name="token" th:value="${token}" />
+
+    <label for="password">New password:</label>
+    <input id="password" type="password" name="password" required minlength="8" />
+
+    <button type="submit">Reset</button>
+</form>
+
+<p>
+    <a th:href="@{/login}">Back to login</a>
+</p>
+
+</body>
+</html>

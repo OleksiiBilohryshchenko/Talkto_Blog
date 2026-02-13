@@ -1,0 +1,17 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Password Reset Error</title>
+</head>
+<body>
+
+<h2>Password Reset Error</h2>
+
+<p th:text="${message}">Invalid or expired token.</p>
+
+<a th:href="@{/password/forgot}">Try again</a> |
+<a th:href="@{/login}">Back to login</a>
+
+</body>
+</html>

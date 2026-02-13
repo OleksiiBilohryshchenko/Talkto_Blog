@@ -22,10 +22,7 @@ public class PostService {
     }
 
     public List<Post> findAll() {
-        return postRepository.findAll()
-                .stream()
-                .sorted((a, b) -> b.getCreatedAt().compareTo(a.getCreatedAt()))
-                .toList();
+        return postRepository.findAllWithAuthor();
     }
 
     public Post findById(Long id) {
