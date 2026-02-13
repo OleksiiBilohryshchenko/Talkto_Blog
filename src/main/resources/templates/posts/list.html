@@ -1,13 +1,17 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
+    <meta charset="UTF-8">
     <title>Posts</title>
 </head>
+
 <body>
 
 <h1>All Posts</h1>
 
-<div th:if="${#authorization.expression('isAuthenticated()')}">
+<div sec:authorize="isAuthenticated()">
 
     <a th:href="@{/posts/new}">Create New Post</a>
 
@@ -25,12 +29,19 @@
 <div th:each="post : ${posts}">
     <h3>
         <a th:href="@{/posts/{id}(id=${post.id})}"
-           th:text="${post.title}">Title</a>
+           th:text="${post.title}">
+            Title
+        </a>
     </h3>
+
     <p>
         By <span th:text="${post.author.name}">Author</span>
-        | <span th:text="${post.createdAt}">Date</span>
+        |
+        <span th:text="${#temporals.format(post.createdAt, 'dd.MM.yyyy HH:mm')}">
+            Date
+        </span>
     </p>
+
     <hr/>
 </div>
 

@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Profile</title>
+</head>
+
+<body>
+
+<h1>Profile</h1>
+
+<p>
+    <strong>Name:</strong>
+    <span th:text="${user.name != null ? user.name : '—'}"></span>
+</p>
+
+<p>
+    <strong>Email:</strong>
+    <span th:text="${user.email}">Email</span>
+</p>
+
+<hr/>
+
+<h3>Your posts</h3>
+
+<div th:if="${#lists.isEmpty(posts)}">
+    <p>You have no posts yet.</p>
+</div>
+
+<div th:each="post : ${posts}">
+    <div style="margin-bottom: 15px;">
+        <a th:href="@{/posts/{id}(id=${post.id})}"
+           th:text="${post.title}">
+            Post title
+        </a>
+        |
+        <small th:text="${#temporals.format(post.createdAt, 'dd.MM.yyyy HH:mm')}">
+            Date
+        </small>
+    </div>
+</div>
+
+<hr/>
+
+<a th:href="@{/profile/edit}">Edit profile</a>
+<br/>
+<a th:href="@{/posts}">Back to posts</a>
+
+</body>
+</html>

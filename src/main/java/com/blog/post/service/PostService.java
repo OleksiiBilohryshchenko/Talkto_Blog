@@ -32,4 +32,8 @@ public class PostService {
         return postRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Post not found"));
     }
+
+    public List<Post> findByAuthor(User author) {
+        return postRepository.findByAuthorOrderByCreatedAtDesc(author);
+    }
 }

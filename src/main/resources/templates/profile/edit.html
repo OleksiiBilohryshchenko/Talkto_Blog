@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Edit Profile</title>
+</head>
+
+<body>
+
+<h1>Edit Profile</h1>
+
+<form th:action="@{/profile/edit}" method="post">
+
+    <p>
+        <strong>Email:</strong>
+        <span th:text="${user.email}"></span>
+    </p>
+
+    <p>
+        <label>Name:</label><br/>
+        <input type="text"
+               name="name"
+               th:value="${user.name}"
+               required/>
+    </p>
+
+    <button type="submit">Save</button>
+
+</form>
+
+<br/>
+<a th:href="@{/profile}">Cancel</a>
+
+</body>
+</html>
