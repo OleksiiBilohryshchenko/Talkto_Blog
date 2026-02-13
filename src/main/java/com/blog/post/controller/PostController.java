@@ -1,5 +1,6 @@
 package com.blog.post.controller;
 
+import com.blog.comment.service.CommentService;
 import com.blog.post.domain.Post;
 import com.blog.post.service.PostService;
 import com.blog.user.domain.User;
@@ -17,10 +18,12 @@ public class PostController {
 
     private final PostService postService;
     private final UserRepository userRepository;
+    private final CommentService commentService;
 
-    public PostController(PostService postService, UserRepository userRepository) {
+    public PostController(PostService postService, UserRepository userRepository, CommentService commentService) {
         this.postService = postService;
         this.userRepository = userRepository;
+        this.commentService = commentService;
     }
 
     @GetMapping
@@ -33,7 +36,11 @@ public class PostController {
     @GetMapping("/{id}")
     public String view(@PathVariable Long id, Model model) {
         Post post = postService.findById(id);
+
         model.addAttribute("post", post);
+        model.addAttribute("comments",
+                commentService.getCommentsForPost(post));
+
         return "posts/view";
     }
 

@@ -1,21 +1,80 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html xmlns:th="http://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+
 <head>
+    <meta charset="UTF-8">
     <title th:text="${post.title}">Post</title>
 </head>
+
 <body>
 
 <h1 th:text="${post.title}">Title</h1>
 
 <p>
-    By <span th:text="${post.author.name}">Author</span>
-    | <span th:text="${post.createdAt}">Date</span>
+    By
+    <span th:text="${post.author != null ? post.author.name : 'Unknown'}">
+        Author
+    </span>
+    |
+    <span th:text="${#temporals.format(post.createdAt, 'dd.MM.yyyy HH:mm')}">
+        Date
+    </span>
 </p>
 
 <hr/>
 
 <div>
     <p th:text="${post.content}">Content</p>
+</div>
+
+<hr/>
+
+<h3>Comments</h3>
+
+<!-- If no comments -->
+<div th:if="${#lists.isEmpty(comments)}">
+    <p>No comments yet.</p>
+</div>
+
+<!-- Comment list -->
+<div th:each="comment : ${comments}">
+    <div style="margin-bottom: 20px;">
+
+        <strong th:text="${comment.author != null ? comment.author.name : 'Unknown'}">
+            Author
+        </strong>
+        |
+        <small th:text="${#temporals.format(comment.createdAt, 'dd.MM.yyyy HH:mm')}">
+            Date
+        </small>
+
+        <p th:text="${comment.content}">Comment text</p>
+
+    </div>
+</div>
+
+<hr/>
+
+<!-- Add comment (only authenticated users) -->
+<div sec:authorize="isAuthenticated()">
+    <h4>Add comment</h4>
+
+    <form th:action="@{/posts/{id}/comments(id=${post.id})}" method="post">
+        <textarea name="content"
+                  rows="4"
+                  cols="60"
+                  required></textarea>
+        <br/><br/>
+        <button type="submit">Submit</button>
+    </form>
+</div>
+
+<!-- Message for anonymous users -->
+<div sec:authorize="!isAuthenticated()">
+    <p>
+        <a th:href="@{/login}">Login</a> to leave a comment.
+    </p>
 </div>
 
 <hr/>
