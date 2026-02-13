@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Posts</title>
+</head>
+<body>
+
+<h1>All Posts</h1>
+
+<div th:if="${#authorization.expression('isAuthenticated()')}">
+
+    <a th:href="@{/posts/new}">Create New Post</a>
+
+    <form th:action="@{/logout}" method="post" style="display:inline;">
+        <button type="submit">Logout</button>
+    </form>
+
+    <hr/>
+</div>
+
+<div th:if="${#lists.isEmpty(posts)}">
+    <p>No posts yet.</p>
+</div>
+
+<div th:each="post : ${posts}">
+    <h3>
+        <a th:href="@{/posts/{id}(id=${post.id})}"
+           th:text="${post.title}">Title</a>
+    </h3>
+    <p>
+        By <span th:text="${post.author.name}">Author</span>
+        | <span th:text="${post.createdAt}">Date</span>
+    </p>
+    <hr/>
+</div>
+
+</body>
+</html>

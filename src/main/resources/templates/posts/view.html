@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title th:text="${post.title}">Post</title>
+</head>
+<body>
+
+<h1 th:text="${post.title}">Title</h1>
+
+<p>
+    By <span th:text="${post.author.name}">Author</span>
+    | <span th:text="${post.createdAt}">Date</span>
+</p>
+
+<hr/>
+
+<div>
+    <p th:text="${post.content}">Content</p>
+</div>
+
+<hr/>
+
+<a th:href="@{/posts}">Back to posts</a>
+
+</body>
+</html>

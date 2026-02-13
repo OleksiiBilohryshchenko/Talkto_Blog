@@ -14,15 +14,17 @@ public class SecurityConfig {
 
         http
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/register", "/login", "/css/**").permitAll()
+                        .requestMatchers("/", "/register", "/login", "/css/**").permitAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
                         .loginPage("/login")
+                        .defaultSuccessUrl("/posts", true)
                         .permitAll()
                 )
                 .logout(logout -> logout
                         .logoutSuccessUrl("/login?logout")
+                        .permitAll()
                 )
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
