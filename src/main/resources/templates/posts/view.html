@@ -1,85 +1,74 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-
-<head>
-    <meta charset="UTF-8">
-    <title th:text="${post.title}">Post</title>
-</head>
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security"
+      th:replace="~{fragments/layout :: layout(~{::body})}">
 
 <body>
 
-<h1 th:text="${post.title}">Title</h1>
+<h2 class="mb-4" th:text="${post.title}">Title</h2>
 
-<p>
-    By
-    <span th:text="${post.author != null ? post.author.name : 'Unknown'}">
-        Author
-    </span>
-    |
-    <span th:text="${#temporals.format(post.createdAt, 'dd.MM.yyyy HH:mm')}">
-        Date
-    </span>
-</p>
+<div class="post-card mb-4">
+    <div class="post-meta mb-2">
+        By
+        <span th:text="${post.author != null ? post.author.name : 'Unknown'}">
+            Author
+        </span>
+        •
+        <span th:text="${#temporals.format(post.createdAt, 'dd.MM.yyyy HH:mm')}">
+            Date
+        </span>
+    </div>
 
-<hr/>
-
-<div>
-    <p th:text="${post.content}">Content</p>
+    <div th:text="${post.content}">Content</div>
 </div>
 
-<hr/>
+<h4 class="mb-3">Comments</h4>
 
-<h3>Comments</h3>
-
-<!-- If no comments -->
-<div th:if="${#lists.isEmpty(comments)}">
-    <p>No comments yet.</p>
+<div th:if="${#lists.isEmpty(comments)}" class="comment-card">
+    No comments yet.
 </div>
 
-<!-- Comment list -->
-<div th:each="comment : ${comments}">
-    <div style="margin-bottom: 20px;">
-
+<div th:each="comment : ${comments}" class="comment-card mb-3">
+    <div class="comment-meta">
         <strong th:text="${comment.author != null ? comment.author.name : 'Unknown'}">
             Author
         </strong>
-        |
-        <small th:text="${#temporals.format(comment.createdAt, 'dd.MM.yyyy HH:mm')}">
+        <span th:text="${#temporals.format(comment.createdAt, 'dd.MM.yyyy HH:mm')}">
             Date
-        </small>
+        </span>
+    </div>
 
-        <p th:text="${comment.content}">Comment text</p>
-
+    <div class="comment-text"
+         th:text="${comment.content}">
+        Comment text
     </div>
 </div>
 
-<hr/>
-
-<!-- Add comment (only authenticated users) -->
-<div sec:authorize="isAuthenticated()">
-    <h4>Add comment</h4>
+<div sec:authorize="isAuthenticated()" class="post-card p-4 mb-4">
+    <h5 class="mb-3">Add comment</h5>
 
     <form th:action="@{/posts/{id}/comments(id=${post.id})}" method="post">
-        <textarea name="content"
-                  rows="4"
-                  cols="60"
-                  required></textarea>
-        <br/><br/>
-        <button type="submit">Submit</button>
+
+        <div class="mb-3">
+            <textarea name="content"
+                      class="form-control"
+                      rows="4"
+                      required></textarea>
+        </div>
+
+        <button type="submit" class="btn btn-primary">
+            Submit
+        </button>
     </form>
 </div>
 
-<!-- Message for anonymous users -->
-<div sec:authorize="!isAuthenticated()">
-    <p>
-        <a th:href="@{/login}">Login</a> to leave a comment.
-    </p>
+<div sec:authorize="!isAuthenticated()" class="comment-card mb-4">
+    <a th:href="@{/login}">Login</a> to leave a comment.
 </div>
 
-<hr/>
-
-<a th:href="@{/posts}">Back to posts</a>
+<a th:href="@{/posts}" class="btn btn-outline-secondary">
+    Back to posts
+</a>
 
 </body>
 </html>

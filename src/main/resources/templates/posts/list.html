@@ -1,48 +1,34 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org"
-      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
-
-<head>
-    <meta charset="UTF-8">
-    <title>Posts</title>
-</head>
+      th:replace="~{fragments/layout :: layout(~{::body})}">
 
 <body>
 
-<h1>All Posts</h1>
+<h1 class="mb-4">All Posts</h1>
 
-<div sec:authorize="isAuthenticated()">
-
-    <a th:href="@{/posts/new}">Create New Post</a>
-
-    <form th:action="@{/logout}" method="post" style="display:inline;">
-        <button type="submit">Logout</button>
-    </form>
-
-    <hr/>
+<div th:if="${#lists.isEmpty(posts)}" class="alert alert-secondary">
+    No posts yet.
 </div>
 
-<div th:if="${#lists.isEmpty(posts)}">
-    <p>No posts yet.</p>
-</div>
+<div th:each="post : ${posts}" class="card mb-3">
+    <div class="card-body">
 
-<div th:each="post : ${posts}">
-    <h3>
-        <a th:href="@{/posts/{id}(id=${post.id})}"
-           th:text="${post.title}">
-            Title
-        </a>
-    </h3>
+        <h5 class="card-title">
+            <a th:href="@{/posts/{id}(id=${post.id})}"
+               th:text="${post.title}">
+                Title
+            </a>
+        </h5>
 
-    <p>
-        By <span th:text="${post.author.name}">Author</span>
-        |
-        <span th:text="${#temporals.format(post.createdAt, 'dd.MM.yyyy HH:mm')}">
-            Date
-        </span>
-    </p>
+        <div class="post-meta mb-2">
+            By <span th:text="${post.author.name}">Author</span>
+            •
+            <span th:text="${#temporals.format(post.createdAt, 'dd.MM.yyyy HH:mm')}">
+        Date
+    </span>
+        </div>
 
-    <hr/>
+    </div>
 </div>
 
 </body>

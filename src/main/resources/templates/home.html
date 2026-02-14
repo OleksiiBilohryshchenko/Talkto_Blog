@@ -1,18 +1,28 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Home</title>
-</head>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout(~{::body})}">
+
 <body>
 
-<h2>Home Page</h2>
+<div class="hero text-center">
 
-<p>You are logged in as:</p>
-<p th:text="${#authentication.name}"></p>
+    <h1 class="hero-title">
+        Welcome to
+        <span class="brand-logo">
+        <span class="brand-talk">Talk</span><span class="brand-to">To</span>
+    </span>
+    </h1>
 
-<form th:action="@{/logout}" method="post">
-    <button type="submit">Logout</button>
-</form>
+    <p class="hero-subtitle">
+        A space for your thoughts, ideas and stories.
+    </p>
+
+    <a class="btn btn-primary btn-lg mt-4"
+       th:href="@{/posts}">
+        View Posts
+    </a>
+
+</div>
 
 </body>
 </html>

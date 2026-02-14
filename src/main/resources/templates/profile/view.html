@@ -1,51 +1,58 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-
-<head>
-    <meta charset="UTF-8">
-    <title>Profile</title>
-</head>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout(~{::body})}">
 
 <body>
 
-<h1>Profile</h1>
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
 
-<p>
-    <strong>Name:</strong>
-    <span th:text="${user.name != null ? user.name : '—'}"></span>
-</p>
+        <h2 class="mb-4 text-center">Profile</h2>
 
-<p>
-    <strong>Email:</strong>
-    <span th:text="${user.email}">Email</span>
-</p>
+        <div class="card mb-4">
+            <div class="card-body">
 
-<hr/>
+                <p class="mb-2">
+                    <strong>Name:</strong>
+                    <span th:text="${user.name != null ? user.name : '—'}"></span>
+                </p>
 
-<h3>Your posts</h3>
+                <p class="mb-0">
+                    <strong>Email:</strong>
+                    <span th:text="${user.email}"></span>
+                </p>
 
-<div th:if="${#lists.isEmpty(posts)}">
-    <p>You have no posts yet.</p>
-</div>
+            </div>
+        </div>
 
-<div th:each="post : ${posts}">
-    <div style="margin-bottom: 15px;">
-        <a th:href="@{/posts/{id}(id=${post.id})}"
-           th:text="${post.title}">
-            Post title
-        </a>
-        |
-        <small th:text="${#temporals.format(post.createdAt, 'dd.MM.yyyy HH:mm')}">
-            Date
-        </small>
+        <h4 class="mb-3">Your Posts</h4>
+
+        <div th:if="${#lists.isEmpty(posts)}" class="alert alert-secondary">
+            You have no posts yet.
+        </div>
+
+        <div th:each="post : ${posts}" class="list-group mb-4">
+            <a th:href="@{/posts/{id}(id=${post.id})}"
+               class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
+                <span th:text="${post.title}"></span>
+                <small class="text-muted"
+                       th:text="${#temporals.format(post.createdAt, 'dd.MM.yyyy HH:mm')}">
+                </small>
+            </a>
+        </div>
+
+        <div class="d-flex justify-content-between">
+            <a th:href="@{/profile/edit}" class="btn btn-outline-primary">
+                Edit Profile
+            </a>
+
+            <a th:href="@{/posts}" class="btn btn-outline-secondary">
+                Back to posts
+            </a>
+        </div>
+
     </div>
 </div>
-
-<hr/>
-
-<a th:href="@{/profile/edit}">Edit profile</a>
-<br/>
-<a th:href="@{/posts}">Back to posts</a>
 
 </body>
 </html>

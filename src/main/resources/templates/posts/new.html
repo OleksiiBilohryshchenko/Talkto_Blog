@@ -1,33 +1,73 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-<head>
-    <title>Create Post</title>
-</head>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout(~{::body})}">
+
 <body>
 
-<h1>Create New Post</h1>
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
 
-<form th:action="@{/posts}" method="post">
+        <h2 class="mb-4 text-center">Create New Post</h2>
 
-    <div>
-        <label>Title:</label><br/>
-        <input type="text" name="title" required/>
+        <form th:action="@{/posts}"
+              th:object="${post}"
+              method="post"
+              novalidate>
+
+            <!-- Global errors -->
+            <div th:if="${#fields.hasErrors('*')}"
+                 class="alert alert-danger">
+                Please fix the errors below.
+            </div>
+
+            <!-- Title -->
+            <div class="mb-3">
+                <label for="title" class="form-label">Title</label>
+
+                <input id="title"
+                       type="text"
+                       th:field="*{title}"
+                       maxlength="255"
+                       required
+                       class="form-control"
+                       th:classappend="${#fields.hasErrors('title')} ? ' is-invalid' : ''">
+
+                <div class="invalid-feedback"
+                     th:if="${#fields.hasErrors('title')}"
+                     th:errors="*{title}">
+                </div>
+            </div>
+
+            <!-- Content -->
+            <div class="mb-3">
+                <label for="content" class="form-label">Content</label>
+
+                <textarea id="content"
+                          th:field="*{content}"
+                          rows="6"
+                          maxlength="5000"
+                          required
+                          class="form-control"
+                          th:classappend="${#fields.hasErrors('content')} ? ' is-invalid' : ''"></textarea>
+
+                <div class="invalid-feedback"
+                     th:if="${#fields.hasErrors('content')}"
+                     th:errors="*{content}">
+                </div>
+            </div>
+
+            <button type="submit" class="btn btn-primary w-100">
+                Create Post
+            </button>
+
+        </form>
+
+        <div class="text-center mt-3">
+            <a th:href="@{/posts}">Back to posts</a>
+        </div>
+
     </div>
-
-    <div>
-        <label>Content:</label><br/>
-        <textarea name="content" rows="8" cols="50" required></textarea>
-    </div>
-
-    <div>
-        <button type="submit">Create</button>
-    </div>
-
-</form>
-
-<br/>
-
-<a th:href="@{/posts}">Back to posts</a>
+</div>
 
 </body>
 </html>

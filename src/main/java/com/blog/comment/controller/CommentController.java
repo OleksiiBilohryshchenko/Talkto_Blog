@@ -5,8 +5,12 @@ import com.blog.post.domain.Post;
 import com.blog.post.service.PostService;
 import com.blog.user.domain.User;
 import com.blog.user.repository.UserRepository;
+import jakarta.validation.Valid;
+import com.blog.comment.domain.Comment;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
@@ -27,17 +31,24 @@ public class CommentController {
 
     @PostMapping
     public String addComment(@PathVariable Long postId,
-                             @RequestParam String content,
-                             Authentication authentication) {
-
-        String email = authentication.getName();
-
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                             @Valid @ModelAttribute("comment") Comment comment,
+                             BindingResult bindingResult,
+                             Authentication authentication,
+                             Model model) {
 
         Post post = postService.findById(postId);
 
-        commentService.addComment(content, user, post);
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("post", post);
+            model.addAttribute("comments",
+                    commentService.getCommentsForPost(postId));
+            return "posts/view";
+        }
+
+        User user = userRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
+
+        commentService.addComment(comment.getContent(), user, post);
 
         return "redirect:/posts/" + postId;
     }

@@ -5,9 +5,11 @@ import com.blog.post.domain.Post;
 import com.blog.post.service.PostService;
 import com.blog.user.domain.User;
 import com.blog.user.repository.UserRepository;
+import jakarta.validation.Valid;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -17,13 +19,15 @@ import java.util.List;
 public class PostController {
 
     private final PostService postService;
-    private final UserRepository userRepository;
     private final CommentService commentService;
+    private final UserRepository userRepository;
 
-    public PostController(PostService postService, UserRepository userRepository, CommentService commentService) {
+    public PostController(PostService postService,
+                          CommentService commentService,
+                          UserRepository userRepository) {
         this.postService = postService;
-        this.userRepository = userRepository;
         this.commentService = commentService;
+        this.userRepository = userRepository;
     }
 
     @GetMapping
@@ -38,28 +42,32 @@ public class PostController {
         Post post = postService.findById(id);
 
         model.addAttribute("post", post);
-        model.addAttribute("comments",
-                commentService.getCommentsForPost(post));
+        model.addAttribute("comments", commentService.getCommentsForPost(id));
+        model.addAttribute("comment", new com.blog.comment.domain.Comment());
 
         return "posts/view";
     }
 
     @GetMapping("/new")
-    public String newPostForm() {
+    public String newPostForm(Model model) {
+        model.addAttribute("post", new Post());
         return "posts/new";
     }
 
     @PostMapping
-    public String create(@RequestParam String title,
-                         @RequestParam String content,
-                         Authentication authentication) {
+    public String create(@Valid @ModelAttribute("post") Post post,
+                         BindingResult bindingResult,
+                         Authentication authentication,
+                         Model model) {
 
-        String email = authentication.getName();
+        if (bindingResult.hasErrors()) {
+            return "posts/new";
+        }
 
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
+        User user = userRepository.findByEmail(authentication.getName())
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        postService.create(title, content, user);
+        postService.create(post.getTitle(), post.getContent(), user);
 
         return "redirect:/posts";
     }

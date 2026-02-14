@@ -3,6 +3,8 @@ package com.blog.comment.domain;
 import com.blog.post.domain.Post;
 import com.blog.user.domain.User;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Size;
 
 import java.time.LocalDateTime;
 
@@ -14,22 +16,27 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Comment cannot be empty")
+    @Size(min = 2, max = 2000, message = "Comment must be between 2 and 2000 characters")
     @Column(nullable = false, columnDefinition = "TEXT")
     private String content;
 
-    @Column(name = "created_at", nullable = false)
+    @Column(name = "created_at", nullable = false, updatable = false)
     private LocalDateTime createdAt;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "author_id")
+    @JoinColumn(name = "author_id", nullable = false)
     private User author;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "post_id")
+    @JoinColumn(name = "post_id", nullable = false)
     private Post post;
 
+    public Comment() {
+    }
+
     @PrePersist
-    public void prePersist() {
+    protected void onCreate() {
         this.createdAt = LocalDateTime.now();
     }
 
@@ -42,7 +49,7 @@ public class Comment {
     }
 
     public void setContent(String content) {
-        this.content = content;
+        this.content = content != null ? content.trim() : null;
     }
 
     public LocalDateTime getCreatedAt() {

@@ -1,8 +1,11 @@
 package com.blog.auth;
 
+import com.blog.user.domain.User;
 import com.blog.user.service.UserService;
+import jakarta.validation.Valid;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
@@ -15,18 +18,26 @@ public class AuthController {
     }
 
     @GetMapping("/register")
-    public String showRegisterForm() {
+    public String showRegisterForm(Model model) {
+        model.addAttribute("user", new User());
         return "register";
     }
 
     @PostMapping("/register")
-    public String registerUser(@RequestParam String name,
-                               @RequestParam String email,
-                               @RequestParam String password,
+    public String registerUser(@Valid @ModelAttribute("user") User user,
+                               BindingResult bindingResult,
                                Model model) {
 
+        if (bindingResult.hasErrors()) {
+            return "register";
+        }
+
         try {
-            userService.registerUser(name, email, password);
+            userService.registerUser(
+                    user.getName(),
+                    user.getEmail(),
+                    user.getPassword()
+            );
             return "redirect:/login";
         } catch (IllegalArgumentException e) {
             model.addAttribute("error", e.getMessage());

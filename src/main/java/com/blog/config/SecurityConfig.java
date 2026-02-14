@@ -19,8 +19,10 @@ public class SecurityConfig {
                                 "/register",
                                 "/login",
                                 "/css/**",
-                                "/password/**"
+                                "/password/**",
+                                "/error/**"
                         ).permitAll()
+                        .requestMatchers("/admin/**").denyAll()
                         .anyRequest().authenticated()
                 )
                 .formLogin(form -> form
@@ -31,6 +33,11 @@ public class SecurityConfig {
                 .logout(logout -> logout
                         .logoutSuccessUrl("/login?logout")
                         .permitAll()
+                )
+                .exceptionHandling(ex -> ex
+                        .accessDeniedHandler((request, response, accessDeniedException) ->
+                                response.sendError(403)
+                        )
                 )
                 .sessionManagement(session ->
                         session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)

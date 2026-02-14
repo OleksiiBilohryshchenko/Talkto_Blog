@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout(~{::body})}">
+<body>
+
+<div class="container" style="max-width: 760px; margin-top: 64px;">
+  <div style="
+            padding: 28px 28px;
+            border-radius: 18px;
+            background: rgba(255,255,255,0.06);
+            border: 1px solid rgba(255,255,255,0.10);
+            backdrop-filter: blur(14px);
+            -webkit-backdrop-filter: blur(14px);
+        ">
+    <div style="display:flex; gap:18px; align-items:flex-start;">
+      <div style="
+                    min-width: 72px;
+                    height: 72px;
+                    border-radius: 16px;
+                    display:flex;
+                    align-items:center;
+                    justify-content:center;
+                    background: rgba(255,255,255,0.10);
+                    border: 1px solid rgba(255,255,255,0.14);
+                ">
+        <div style="font-size: 28px; font-weight: 800; color: rgba(255,255,255,0.92);"
+             th:text="${status != null ? status : 'ERR'}">ERR</div>
+      </div>
+
+      <div style="flex:1;">
+        <div style="font-size: 22px; font-weight: 700; color: rgba(255,255,255,0.92); margin-bottom: 6px;"
+             th:text="${error != null ? error : 'Something went wrong'}">
+          Something went wrong
+        </div>
+
+        <div style="font-size: 15px; line-height: 1.5; color: rgba(255,255,255,0.70); margin-bottom: 14px;"
+             th:text="${message != null && !#strings.isEmpty(message) ? message : 'An unexpected error occurred.'}">
+          An unexpected error occurred.
+        </div>
+
+        <div style="font-size: 13px; color: rgba(255,255,255,0.55); margin-bottom: 18px;">
+          <span>Path: </span><span th:text="${path}">/</span>
+        </div>
+
+        <div style="display:flex; gap:12px; flex-wrap:wrap;">
+          <a th:href="@{/}" class="btn btn-outline-light">Back to Home</a>
+          <a th:href="@{/posts}" class="btn btn-outline-light">Go to Posts</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+</body>
+</html>

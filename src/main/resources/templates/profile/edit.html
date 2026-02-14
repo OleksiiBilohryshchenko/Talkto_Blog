@@ -1,36 +1,47 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
-
-<head>
-    <meta charset="UTF-8">
-    <title>Edit Profile</title>
-</head>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout(~{::body})}">
 
 <body>
 
-<h1>Edit Profile</h1>
+<div class="row justify-content-center">
+    <div class="col-md-6 col-lg-5">
 
-<form th:action="@{/profile/edit}" method="post">
+        <h2 class="mb-4 text-center">Edit Profile</h2>
 
-    <p>
-        <strong>Email:</strong>
-        <span th:text="${user.email}"></span>
-    </p>
+        <form th:action="@{/profile/edit}" method="post">
 
-    <p>
-        <label>Name:</label><br/>
-        <input type="text"
-               name="name"
-               th:value="${user.name}"
-               required/>
-    </p>
+            <div class="mb-3">
+                <label class="form-label">Email</label>
+                <input type="email"
+                       class="form-control"
+                       th:value="${user.email}"
+                       readonly>
+            </div>
 
-    <button type="submit">Save</button>
+            <div class="mb-3">
+                <label class="form-label">Name</label>
+                <input type="text"
+                       name="name"
+                       class="form-control"
+                       th:value="${user.name}"
+                       required>
+            </div>
 
-</form>
+            <button type="submit" class="btn btn-primary w-100">
+                Save Changes
+            </button>
 
-<br/>
-<a th:href="@{/profile}">Cancel</a>
+        </form>
+
+        <div class="text-center mt-3">
+            <a th:href="@{/profile}" class="btn btn-link">
+                Cancel
+            </a>
+        </div>
+
+    </div>
+</div>
 
 </body>
 </html>

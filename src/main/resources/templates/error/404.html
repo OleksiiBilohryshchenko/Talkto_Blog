@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org"
+      th:replace="~{fragments/layout :: layout(~{::body})}">
+<body>
+
+<div class="container text-center mt-5">
+    <h1 style="font-size: 72px; font-weight: 700; color: #ffffff;">404</h1>
+    <p style="font-size: 20px; color: #cfd8dc;">
+        Page not found.
+    </p>
+
+    <a th:href="@{/}"
+       style="margin-top: 20px;"
+       class="btn btn-outline-light">
+        Back to Home
+    </a>
+</div>
+
+</body>
+</html>

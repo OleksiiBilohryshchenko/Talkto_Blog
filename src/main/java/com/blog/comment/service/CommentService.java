@@ -4,12 +4,13 @@ import com.blog.comment.domain.Comment;
 import com.blog.comment.repository.CommentRepository;
 import com.blog.post.domain.Post;
 import com.blog.user.domain.User;
-import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@Transactional(readOnly = true)
 public class CommentService {
 
     private final CommentRepository commentRepository;
@@ -18,6 +19,7 @@ public class CommentService {
         this.commentRepository = commentRepository;
     }
 
+    @Transactional
     public Comment addComment(String content, User author, Post post) {
 
         if (content == null || content.trim().isEmpty()) {
@@ -32,7 +34,7 @@ public class CommentService {
         return commentRepository.save(comment);
     }
 
-    public List<Comment> getCommentsForPost(Post post) {
-        return commentRepository.findByPostOrderByCreatedAtAsc(post);
+    public List<Comment> getCommentsForPost(Long postId) {
+        return commentRepository.findByPostIdWithAuthor(postId);
     }
 }
