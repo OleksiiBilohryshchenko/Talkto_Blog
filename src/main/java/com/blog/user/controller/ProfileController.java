@@ -28,7 +28,7 @@ public class ProfileController {
 
         model.addAttribute("user", user);
         model.addAttribute("posts",
-                postService.findByAuthor(user));
+                postService.findByAuthorId(user.getId()));
 
         return "profile/view";
     }

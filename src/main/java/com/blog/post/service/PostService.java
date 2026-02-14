@@ -21,6 +21,10 @@ public class PostService {
     @Transactional
     public Post create(String title, String content, User author) {
 
+        if (author == null) {
+            throw new IllegalArgumentException("Author cannot be null");
+        }
+
         if (title == null || title.trim().isEmpty()) {
             throw new IllegalArgumentException("Title cannot be empty");
         }
@@ -29,7 +33,11 @@ public class PostService {
             throw new IllegalArgumentException("Content cannot be empty");
         }
 
-        Post post = new Post(title.trim(), content.trim(), author);
+        Post post = new Post(
+                title.trim(),
+                content.trim(),
+                author
+        );
 
         return postRepository.save(post);
     }
@@ -43,10 +51,12 @@ public class PostService {
                 .orElseThrow(() -> new IllegalArgumentException("Post not found"));
     }
 
-    public List<Post> findByAuthor(User author) {
-        return postRepository.findAllWithAuthor()
-                .stream()
-                .filter(p -> p.getAuthor().equals(author))
-                .toList();
+    public List<Post> findByAuthorId(Long authorId) {
+
+        if (authorId == null) {
+            throw new IllegalArgumentException("Author id cannot be null");
+        }
+
+        return postRepository.findByAuthorId(authorId);
     }
 }

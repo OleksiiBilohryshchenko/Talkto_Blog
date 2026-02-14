@@ -1,7 +1,6 @@
 package com.blog.post.repository;
 
 import com.blog.post.domain.Post;
-import com.blog.user.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -26,4 +25,14 @@ public interface PostRepository extends JpaRepository<Post, Long> {
            ORDER BY p.createdAt DESC
            """)
     List<Post> findAllWithAuthor();
+
+    @Query("""
+       SELECT p
+       FROM Post p
+       JOIN FETCH p.author
+       WHERE p.author.id = :authorId
+       ORDER BY p.createdAt DESC
+       """)
+    List<Post> findByAuthorId(@Param("authorId") Long authorId);
+
 }
