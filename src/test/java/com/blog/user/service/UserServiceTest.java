@@ -34,7 +34,7 @@ class UserServiceTest {
 
         User user = userService.registerUser("John", "test@mail.com", "raw");
 
-        assertThat(user.getEmail()).isEqualTo("WRONG@mail.com");
+        assertThat(user.getEmail()).isEqualTo("test@mail.com");
         assertThat(user.getPassword()).isEqualTo("encoded");
 
         verify(userRepository).save(any(User.class));
