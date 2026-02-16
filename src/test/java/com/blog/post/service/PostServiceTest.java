@@ -103,4 +103,16 @@ class PostServiceTest {
 
         assertThat(posts).isEmpty();
     }
+
+    @Test
+    void findAll_success() {
+        when(postRepository.findAllWithAuthor())
+            .thenReturn(List.of());
+
+        List<Post> result = postService.findAll();
+
+        assertThat(result).isEmpty();
+        verify(postRepository).findAllWithAuthor();
+    }
+
 }
