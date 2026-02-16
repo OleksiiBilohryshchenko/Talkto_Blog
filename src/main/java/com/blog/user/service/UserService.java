@@ -8,38 +8,38 @@ import org.springframework.stereotype.Service;
 @Service
 public class UserService {
 
-    private final UserRepository userRepository;
-    private final PasswordEncoder passwordEncoder;
+  private final UserRepository userRepository;
+  private final PasswordEncoder passwordEncoder;
 
-    public UserService(UserRepository userRepository,
-                       PasswordEncoder passwordEncoder) {
-        this.userRepository = userRepository;
-        this.passwordEncoder = passwordEncoder;
+  public UserService(UserRepository userRepository,
+      PasswordEncoder passwordEncoder) {
+    this.userRepository = userRepository;
+    this.passwordEncoder = passwordEncoder;
+  }
+
+  public User registerUser(String name, String email, String rawPassword) {
+
+    if (userRepository.existsByEmail(email)) {
+      throw new IllegalArgumentException("Email already exists");
     }
 
-    public User registerUser(String name, String email, String rawPassword) {
+    String encodedPassword = passwordEncoder.encode(rawPassword);
 
-        if (userRepository.existsByEmail(email)) {
-            throw new IllegalArgumentException("Email already exists");
-        }
+    User user = new User(name, email, encodedPassword);
 
-        String encodedPassword = passwordEncoder.encode(rawPassword);
+    return userRepository.save(user);
+  }
 
-        User user = new User(name, email, encodedPassword);
+  public User findByEmail(String email) {
+    return userRepository.findByEmail(email)
+        .orElseThrow(() -> new RuntimeException("User not found"));
+  }
 
-        return userRepository.save(user);
-    }
+  public User save(User user) {
+    return userRepository.save(user);
+  }
 
-    public User findByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .orElseThrow(() -> new RuntimeException("User not found"));
-    }
-
-    public User save(User user) {
-        return userRepository.save(user);
-    }
-
-    public boolean existsByEmail(String email) {
-        return userRepository.existsByEmail(email);
-    }
+  public boolean existsByEmail(String email) {
+    return userRepository.existsByEmail(email);
+  }
 }

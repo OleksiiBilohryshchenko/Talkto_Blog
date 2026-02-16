@@ -6,8 +6,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 @SpringBootApplication
 public class TalktoApplication {
 
-    public static void main(String[] args) {
-        SpringApplication.run(TalktoApplication.class, args);
-    }
+  public static void main(String[] args) {
+    SpringApplication.run(TalktoApplication.class, args);
+  }
 
 }
