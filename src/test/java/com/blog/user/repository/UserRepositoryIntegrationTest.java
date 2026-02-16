@@ -1,40 +1,20 @@
 package com.blog.user.repository;
 
+import com.blog.AbstractIntegrationTest;
+import com.blog.user.domain.User;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.test.context.DynamicPropertyRegistry;
-import org.springframework.test.context.DynamicPropertySource;
-import org.testcontainers.containers.PostgreSQLContainer;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import static org.assertj.core.api.Assertions.*;
 
-@DataJpaTest
-@Testcontainers
-class UserRepositoryIntegrationTest {
-
-    @Container
-    static final PostgreSQLContainer<?> postgres =
-            new PostgreSQLContainer<>("postgres:16-alpine")
-                    .withDatabaseName("talkto_test")
-                    .withUsername("test")
-                    .withPassword("test");
-
-    @DynamicPropertySource
-    static void overrideProperties(DynamicPropertyRegistry registry) {
-        registry.add("spring.datasource.url", postgres::getJdbcUrl);
-        registry.add("spring.datasource.username", postgres::getUsername);
-        registry.add("spring.datasource.password", postgres::getPassword);
-    }
+class UserRepositoryIntegrationTest extends AbstractIntegrationTest {
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Test
     void save_and_findByEmail() {
-        var user = new com.blog.user.domain.User("John", "john@mail.com", "password123");
+        User user = new User("John", "john@mail.com", "password123");
 
         userRepository.save(user);
 
@@ -45,7 +25,7 @@ class UserRepositoryIntegrationTest {
 
     @Test
     void existsByEmail_shouldReturnTrue() {
-        var user = new com.blog.user.domain.User("John", "exists@mail.com", "password123");
+        User user = new User("John", "exists@mail.com", "password123");
         userRepository.save(user);
 
         assertThat(userRepository.existsByEmail("exists@mail.com")).isTrue();
@@ -53,12 +33,12 @@ class UserRepositoryIntegrationTest {
 
     @Test
     void email_shouldBeUnique() {
-        var u1 = new com.blog.user.domain.User("John", "unique@mail.com", "password123");
+        User u1 = new User("John", "unique@mail.com", "password123");
         userRepository.save(u1);
 
-        var u2 = new com.blog.user.domain.User("Another", "unique@mail.com", "anotherPass");
+        User u2 = new User("Another", "unique@mail.com", "anotherPass");
 
         assertThatThrownBy(() -> userRepository.saveAndFlush(u2))
-                .isInstanceOf(Exception.class);
+            .isInstanceOf(Exception.class);
     }
 }
