@@ -9,24 +9,31 @@
 
     <h2 class="mb-4 text-center">Forgot Password</h2>
 
-    <form method="post" th:action="@{/password/forgot}">
+    <form method="post"
+          th:action="@{/password/forgot}"
+          data-testid="forgot-form">
 
       <div class="mb-3">
         <label class="form-label">Email</label>
         <input type="email"
                name="email"
                class="form-control"
-               required>
+               required
+               data-testid="forgot-email-input">
       </div>
 
-      <button type="submit" class="btn btn-primary w-100">
+      <button type="submit"
+              class="btn btn-primary w-100"
+              data-testid="forgot-submit-btn">
         Send Reset Link
       </button>
 
     </form>
 
     <div class="text-center mt-3">
-      <a th:href="@{/login}">Back to login</a>
+      <a th:href="@{/login}" data-testid="forgot-back-login-link">
+        Back to login
+      </a>
     </div>
 
   </div>

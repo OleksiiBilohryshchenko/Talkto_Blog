@@ -9,11 +9,15 @@
 
         <h2 class="mb-4 text-center">Reset Password</h2>
 
-        <div th:if="${error}" class="alert alert-danger text-center">
+        <div th:if="${error}"
+             class="alert alert-danger text-center"
+             data-testid="reset-error-message">
             <span th:text="${error}"></span>
         </div>
 
-        <form method="post" th:action="@{/password/reset}">
+        <form method="post"
+              th:action="@{/password/reset}"
+              data-testid="reset-form">
 
             <input type="hidden" name="token" th:value="${token}" />
 
@@ -23,17 +27,22 @@
                        name="password"
                        class="form-control"
                        required
-                       minlength="8">
+                       minlength="8"
+                       data-testid="reset-password-input">
             </div>
 
-            <button type="submit" class="btn btn-primary w-100">
+            <button type="submit"
+                    class="btn btn-primary w-100"
+                    data-testid="reset-submit-btn">
                 Reset Password
             </button>
 
         </form>
 
         <div class="text-center mt-3">
-            <a th:href="@{/login}">Back to login</a>
+            <a th:href="@{/login}" data-testid="reset-back-login-link">
+                Back to login
+            </a>
         </div>
 
     </div>

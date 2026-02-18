@@ -21,9 +21,12 @@ public class SmtpMailService implements MailService {
       MimeMessage message = mailSender.createMimeMessage();
       MimeMessageHelper helper = new MimeMessageHelper(message, true);
 
+      helper.setFrom("no-reply@talkto.local");
       helper.setTo(to);
       helper.setSubject("Password Reset Request");
       helper.setText(buildEmailBody(resetLink), true);
+
+      System.out.println(">>> Sending email to " + to);
 
       mailSender.send(message);
 

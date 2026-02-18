@@ -4,28 +4,38 @@
 
 <body>
 
-<h1 class="mb-4">All Posts</h1>
+<h1 class="mb-4" data-testid="posts-list-title">All Posts</h1>
 
-<div th:if="${#lists.isEmpty(posts)}" class="alert alert-secondary">
+<div th:if="${#lists.isEmpty(posts)}"
+     class="alert alert-secondary"
+     data-testid="posts-empty-state">
     No posts yet.
 </div>
 
-<div th:each="post : ${posts}" class="card mb-3">
+<div th:each="post : ${posts}"
+     class="card mb-3"
+     data-testid="post-card">
     <div class="card-body">
 
         <h5 class="card-title">
             <a th:href="@{/posts/{id}(id=${post.id})}"
-               th:text="${post.title}">
+               th:text="${post.title}"
+               data-testid="post-title-link">
                 Title
             </a>
         </h5>
 
         <div class="post-meta mb-2">
-            By <span th:text="${post.author.name}">Author</span>
+            By
+            <span th:text="${post.author.name}"
+                  data-testid="post-author">
+                Author
+            </span>
             •
-            <span th:text="${#temporals.format(post.createdAt, 'dd.MM.yyyy HH:mm')}">
-        Date
-    </span>
+            <span th:text="${#temporals.format(post.createdAt, 'dd.MM.yyyy HH:mm')}"
+                  data-testid="post-date">
+                Date
+            </span>
         </div>
 
     </div>

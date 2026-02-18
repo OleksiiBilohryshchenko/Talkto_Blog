@@ -7,14 +7,17 @@
 <div class="row justify-content-center">
     <div class="col-md-6 col-lg-4 text-center">
 
-        <div class="glass-success mb-4">
+        <div class="glass-success mb-4"
+             data-testid="reset-success-block">
             <h5 class="mb-2">Reset Link Sent</h5>
             <p class="mb-0 text-secondary">
                 If the email exists, a reset link has been sent.
             </p>
         </div>
 
-        <a th:href="@{/login}" class="btn btn-primary">
+        <a th:href="@{/login}"
+           class="btn btn-primary"
+           data-testid="reset-success-back-login-btn">
             Back to login
         </a>
 

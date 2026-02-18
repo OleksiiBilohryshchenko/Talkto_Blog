@@ -5,68 +5,97 @@
 
 <body>
 
-<h2 class="mb-4" th:text="${post.title}">Title</h2>
+<h2 class="mb-4"
+    th:text="${post.title}"
+    data-testid="post-view-title">
+    Title
+</h2>
 
-<div class="post-card mb-4">
+<div class="post-card mb-4" data-testid="post-view-card">
     <div class="post-meta mb-2">
         By
-        <span th:text="${post.author != null ? post.author.name : 'Unknown'}">
+        <span th:text="${post.author != null ? post.author.name : 'Unknown'}"
+              data-testid="post-view-author">
             Author
         </span>
         •
-        <span th:text="${#temporals.format(post.createdAt, 'dd.MM.yyyy HH:mm')}">
+        <span th:text="${#temporals.format(post.createdAt, 'dd.MM.yyyy HH:mm')}"
+              data-testid="post-view-date">
             Date
         </span>
     </div>
 
-    <div th:text="${post.content}">Content</div>
+    <div th:text="${post.content}"
+         data-testid="post-view-content">
+        Content
+    </div>
 </div>
 
 <h4 class="mb-3">Comments</h4>
 
-<div th:if="${#lists.isEmpty(comments)}" class="comment-card">
+<div th:if="${#lists.isEmpty(comments)}"
+     class="comment-card"
+     data-testid="comments-empty-state">
     No comments yet.
 </div>
 
-<div th:each="comment : ${comments}" class="comment-card mb-3">
+<div th:each="comment : ${comments}"
+     class="comment-card mb-3"
+     data-testid="comment-card">
+
     <div class="comment-meta">
-        <strong th:text="${comment.author != null ? comment.author.name : 'Unknown'}">
+        <strong th:text="${comment.author != null ? comment.author.name : 'Unknown'}"
+                data-testid="comment-author">
             Author
         </strong>
-        <span th:text="${#temporals.format(comment.createdAt, 'dd.MM.yyyy HH:mm')}">
+        <span th:text="${#temporals.format(comment.createdAt, 'dd.MM.yyyy HH:mm')}"
+              data-testid="comment-date">
             Date
         </span>
     </div>
 
     <div class="comment-text"
-         th:text="${comment.content}">
+         th:text="${comment.content}"
+         data-testid="comment-content">
         Comment text
     </div>
 </div>
 
-<div sec:authorize="isAuthenticated()" class="post-card p-4 mb-4">
+<div sec:authorize="isAuthenticated()"
+     class="post-card p-4 mb-4"
+     data-testid="comment-form-block">
+
     <h5 class="mb-3">Add comment</h5>
 
-    <form th:action="@{/posts/{id}/comments(id=${post.id})}" method="post">
+    <form th:action="@{/posts/{id}/comments(id=${post.id})}"
+          method="post"
+          data-testid="comment-form">
 
         <div class="mb-3">
             <textarea name="content"
                       class="form-control"
                       rows="4"
-                      required></textarea>
+                      required
+                      data-testid="comment-textarea"></textarea>
         </div>
 
-        <button type="submit" class="btn btn-primary">
+        <button type="submit"
+                class="btn btn-primary"
+                data-testid="comment-submit-btn">
             Submit
         </button>
     </form>
 </div>
 
-<div sec:authorize="!isAuthenticated()" class="comment-card mb-4">
+<div sec:authorize="!isAuthenticated()"
+     class="comment-card mb-4"
+     data-testid="comment-login-required">
     <a th:href="@{/login}">Login</a> to leave a comment.
 </div>
 
-<a th:href="@{/posts}" class="btn btn-outline-secondary">
+<a th:href="@{/posts}"
+   class="btn btn-outline-secondary"
+   data-testid="post-view-back-btn">
     Back to posts
 </a>
 

@@ -12,15 +12,15 @@
         <form th:action="@{/posts}"
               th:object="${post}"
               method="post"
-              novalidate>
+              novalidate
+              data-testid="post-create-form">
 
-            <!-- Global errors -->
             <div th:if="${#fields.hasErrors('*')}"
-                 class="alert alert-danger">
+                 class="alert alert-danger"
+                 data-testid="post-create-global-error">
                 Please fix the errors below.
             </div>
 
-            <!-- Title -->
             <div class="mb-3">
                 <label for="title" class="form-label">Title</label>
 
@@ -30,7 +30,8 @@
                        maxlength="255"
                        required
                        class="form-control"
-                       th:classappend="${#fields.hasErrors('title')} ? ' is-invalid' : ''">
+                       th:classappend="${#fields.hasErrors('title')} ? ' is-invalid' : ''"
+                       data-testid="post-title-input">
 
                 <div class="invalid-feedback"
                      th:if="${#fields.hasErrors('title')}"
@@ -38,7 +39,6 @@
                 </div>
             </div>
 
-            <!-- Content -->
             <div class="mb-3">
                 <label for="content" class="form-label">Content</label>
 
@@ -48,7 +48,8 @@
                           maxlength="5000"
                           required
                           class="form-control"
-                          th:classappend="${#fields.hasErrors('content')} ? ' is-invalid' : ''"></textarea>
+                          th:classappend="${#fields.hasErrors('content')} ? ' is-invalid' : ''"
+                          data-testid="post-content-textarea"></textarea>
 
                 <div class="invalid-feedback"
                      th:if="${#fields.hasErrors('content')}"
@@ -56,14 +57,19 @@
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-primary w-100">
+            <button type="submit"
+                    class="btn btn-primary w-100"
+                    data-testid="post-submit-btn">
                 Create Post
             </button>
 
         </form>
 
         <div class="text-center mt-3">
-            <a th:href="@{/posts}">Back to posts</a>
+            <a th:href="@{/posts}"
+               data-testid="post-create-back-link">
+                Back to posts
+            </a>
         </div>
 
     </div>

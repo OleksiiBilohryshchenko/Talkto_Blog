@@ -7,16 +7,21 @@
 <div class="row justify-content-center">
     <div class="col-md-6 col-lg-5">
 
-        <h2 class="mb-4 text-center">Edit Profile</h2>
+        <h2 class="mb-4 text-center" data-testid="profile-edit-title">
+            Edit Profile
+        </h2>
 
-        <form th:action="@{/profile/edit}" method="post">
+        <form th:action="@{/profile/edit}"
+              method="post"
+              data-testid="profile-edit-form">
 
             <div class="mb-3">
                 <label class="form-label">Email</label>
                 <input type="email"
                        class="form-control"
                        th:value="${user.email}"
-                       readonly>
+                       readonly
+                       data-testid="profile-edit-email-input">
             </div>
 
             <div class="mb-3">
@@ -25,17 +30,22 @@
                        name="name"
                        class="form-control"
                        th:value="${user.name}"
-                       required>
+                       required
+                       data-testid="profile-edit-name-input">
             </div>
 
-            <button type="submit" class="btn btn-primary w-100">
+            <button type="submit"
+                    class="btn btn-primary w-100"
+                    data-testid="profile-edit-submit-btn">
                 Save Changes
             </button>
 
         </form>
 
         <div class="text-center mt-3">
-            <a th:href="@{/profile}" class="btn btn-link">
+            <a th:href="@{/profile}"
+               class="btn btn-link"
+               data-testid="profile-edit-cancel-btn">
                 Cancel
             </a>
         </div>

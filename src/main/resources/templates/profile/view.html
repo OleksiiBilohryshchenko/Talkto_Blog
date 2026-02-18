@@ -7,48 +7,70 @@
 <div class="row justify-content-center">
     <div class="col-md-8 col-lg-6">
 
-        <h2 class="mb-4 text-center">Profile</h2>
+        <h2 class="mb-4 text-center" data-testid="profile-view-title">
+            Profile
+        </h2>
 
-        <div class="card mb-4">
+        <div class="card mb-4" data-testid="profile-user-block">
             <div class="card-body">
 
                 <p class="mb-2">
                     <strong>Name:</strong>
-                    <span th:text="${user.name != null ? user.name : '—'}"></span>
+                    <span th:text="${user.name != null ? user.name : '—'}"
+                          data-testid="profile-user-name"></span>
                 </p>
 
                 <p class="mb-0">
                     <strong>Email:</strong>
-                    <span th:text="${user.email}"></span>
+                    <span th:text="${user.email}"
+                          data-testid="profile-user-email"></span>
                 </p>
 
             </div>
         </div>
 
-        <h4 class="mb-3">Your Posts</h4>
+        <h4 class="mb-3" data-testid="profile-posts-title">
+            Your Posts
+        </h4>
 
-        <div th:if="${#lists.isEmpty(posts)}" class="alert alert-secondary">
+        <div th:if="${#lists.isEmpty(posts)}"
+             class="alert alert-secondary"
+             data-testid="profile-posts-empty">
             You have no posts yet.
         </div>
 
-        <div th:each="post : ${posts}" class="list-group mb-4">
+        <div th:each="post : ${posts}"
+             class="list-group mb-4"
+             data-testid="profile-post-item">
+
             <a th:href="@{/posts/{id}(id=${post.id})}"
-               class="list-group-item list-group-item-action d-flex justify-content-between align-items-center">
-                <span th:text="${post.title}"></span>
+               class="list-group-item list-group-item-action d-flex justify-content-between align-items-center"
+               data-testid="profile-post-link">
+
+                <span th:text="${post.title}"
+                      data-testid="profile-post-title"></span>
+
                 <small class="text-muted"
-                       th:text="${#temporals.format(post.createdAt, 'dd.MM.yyyy HH:mm')}">
+                       th:text="${#temporals.format(post.createdAt, 'dd.MM.yyyy HH:mm')}"
+                       data-testid="profile-post-date">
                 </small>
             </a>
         </div>
 
         <div class="d-flex justify-content-between">
-            <a th:href="@{/profile/edit}" class="btn btn-outline-primary">
+
+            <a th:href="@{/profile/edit}"
+               class="btn btn-outline-primary"
+               data-testid="profile-edit-btn">
                 Edit Profile
             </a>
 
-            <a th:href="@{/posts}" class="btn btn-outline-secondary">
+            <a th:href="@{/posts}"
+               class="btn btn-outline-secondary"
+               data-testid="profile-back-posts-btn">
                 Back to posts
             </a>
+
         </div>
 
     </div>

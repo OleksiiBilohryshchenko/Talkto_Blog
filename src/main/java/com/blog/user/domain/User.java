@@ -86,6 +86,10 @@ public class User {
     this.password = password;
   }
 
+  public void setEmail(String email) {
+    this.email = email;
+  }
+
   public LocalDateTime getCreatedAt() {
     return createdAt;
   }
