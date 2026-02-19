@@ -35,12 +35,15 @@ public class AuthController {
     }
 
     try {
-      userService.registerUser(
+
+      User savedUser = userService.registerUser(
           user.getName(),
           user.getEmail(),
           user.getPassword()
       );
+
       return "redirect:/login";
+
     } catch (IllegalArgumentException e) {
       model.addAttribute("error", e.getMessage());
       return "register";

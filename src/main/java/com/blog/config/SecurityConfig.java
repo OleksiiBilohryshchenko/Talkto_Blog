@@ -34,11 +34,11 @@ public class SecurityConfig {
             .logoutSuccessUrl("/login?logout")
             .permitAll()
         )
-//        .exceptionHandling(ex -> ex
-//            .accessDeniedHandler((request, response, accessDeniedException) ->
-//                response.sendError(403)
-//            )
-//        )
+        .exceptionHandling(ex -> ex
+            .accessDeniedHandler((request, response, accessDeniedException) ->
+                response.sendError(403)
+            )
+        )
         .sessionManagement(session ->
             session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
         );
