@@ -36,7 +36,7 @@ public class AuthController {
 
     try {
 
-      User savedUser = userService.registerUser(
+      userService.registerUser(
           user.getName(),
           user.getEmail(),
           user.getPassword()
