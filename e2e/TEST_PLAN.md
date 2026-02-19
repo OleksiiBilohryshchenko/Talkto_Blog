@@ -1,121 +1,203 @@
 # E2E Test Plan – TalkTo
 
-## Test Strategy
-
-All E2E tests are:
-- Independent
-- Data-isolated
-- Using only data-testid selectors
-- Designed to run in CI
-- Creating their own test data (unique email per test)
+**Tool:** Selenium IDE  
+**Browser:** Firefox  
+**Base URL:** `http://localhost:8080`  
+**Stack:** Spring Boot + Thymeleaf
 
 ---
 
-## 1. Registration Flow
+## Known Constraints
 
-Goal: Verify user can register successfully.
+| # | Problem | Workaround |
+|---|---------|------------|
+| 1 | `type` fails in Firefox | Use `executeScript` and set `.value` directly |
+| 2 | `${var}` not supported inside `executeScript` | Inline values directly |
+| 3 | Selenium IDE cannot extract dynamic reset link | Reset flow split into two tests |
+| 4 | Reset token is single-use | Always regenerate token |
 
-Flow:
-1. Open /register
-2. Generate unique email
-3. Fill name
-4. Fill email
-5. Fill password
-6. Submit form
-7. Verify redirect to posts page
-
-Expected:
-User is registered and redirected to posts list.
+**Rule:** For `executeScript`, JavaScript must be inside `Target`. `Value` stays empty.
 
 ---
 
-## 2. Login Flow
+## Selector Strategy
 
-Goal: Verify user can log in.
+All tests use only `data-testid` selectors:
 
-Flow:
-1. Generate unique email
-2. Register user
-3. Open /login
-4. Enter email
-5. Enter password
-6. Submit
-7. Verify posts page
+```
+css=[data-testid="..."]
+```
 
-Expected:
-User is authenticated successfully.
+No class-based or DOM-position selectors are used.
 
 ---
 
-## 3. Create Post Flow
+## TC1 – Registration
 
-Goal: Verify authenticated user can create a post.
+**Email:** `testuser@test.com`
 
-Flow:
-1. Generate unique email
-2. Register
-3. Login
-4. Open /posts/new
-5. Enter title
-6. Enter content
-7. Submit
-8. Verify post is visible
+| # | Command | Target | Value |
+|---|---------|--------|-------|
+| 1 | open | `/` | |
+| 2 | click | `css=[data-testid="login-register-link"]` | |
+| 3 | executeScript | `document.querySelector('[data-testid="register-name-input"]').value = 'TestUser';` | |
+| 4 | executeScript | `document.querySelector('[data-testid="register-email-input"]').value = 'testuser@test.com';` | |
+| 5 | executeScript | `document.querySelector('[data-testid="register-password-input"]').value = 'Test12345';` | |
+| 6 | click | `css=[data-testid="register-submit-btn"]` | |
+| 7 | waitForElementPresent | `css=[data-testid="login-submit-btn"]` | `10000` |
+| 8 | executeScript | `document.querySelector('[data-testid="login-email-input"]').value = 'testuser@test.com';` | |
+| 9 | executeScript | `document.querySelector('[data-testid="login-password-input"]').value = 'Test12345';` | |
+| 10 | click | `css=[data-testid="login-submit-btn"]` | |
+| 11 | waitForElementPresent | `css=[data-testid="posts-list-title"]` | `10000` |
 
-Expected:
-Post appears in posts list.
-
----
-
-## 4. Add Comment Flow
-
-Goal: Verify authenticated user can comment.
-
-Flow:
-1. Generate unique email
-2. Register
-3. Login
-4. Create post
-5. Open post
-6. Add comment
-7. Verify comment is visible
-
-Expected:
-Comment is successfully added.
+**Expected:** Posts page visible.
 
 ---
 
-## 5. Profile Flow
+## TC2 – Login
 
-Goal: Verify profile page works.
+**Email:** `testlogin@test.com`
 
-Flow:
-1. Generate unique email
-2. Register
-3. Login
-4. Open /profile
-5. Verify user block visible
+| # | Command | Target | Value |
+|---|---------|--------|-------|
+| 1 | open | `/register` | |
+| 2 | executeScript | `document.querySelector('[data-testid="register-name-input"]').value = 'TestUser';` | |
+| 3 | executeScript | `document.querySelector('[data-testid="register-email-input"]').value = 'testlogin@test.com';` | |
+| 4 | executeScript | `document.querySelector('[data-testid="register-password-input"]').value = 'Test12345';` | |
+| 5 | click | `css=[data-testid="register-submit-btn"]` | |
+| 6 | waitForElementPresent | `css=[data-testid="login-submit-btn"]` | `10000` |
+| 7 | executeScript | `document.querySelector('[data-testid="login-email-input"]').value = 'testlogin@test.com';` | |
+| 8 | executeScript | `document.querySelector('[data-testid="login-password-input"]').value = 'Test12345';` | |
+| 9 | click | `css=[data-testid="login-submit-btn"]` | |
+| 10 | waitForElementPresent | `css=[data-testid="posts-list-title"]` | `10000` |
 
-Expected:
-Profile page displays user info.
+**Expected:** Login successful, posts page visible.
 
 ---
 
-## 6. Full Password Reset Flow
+## TC3 – Create Post
 
-Goal: Verify password reset end-to-end.
+**Email:** `testpost@test.com`
 
-Flow:
-1. Generate unique email
-2. Register
-3. Open /password/forgot
-4. Submit email
-5. Open MailHog (localhost:8025)
-6. Open latest email
-7. Extract reset link
-8. Open reset link
-9. Set new password
-10. Login with new password
-11. Verify successful login
+| # | Command | Target | Value |
+|---|---------|--------|-------|
+| 1–10 | Register + Login | Use TC2 steps with email `testpost@test.com` | |
+| 11 | open | `/posts/new` | |
+| 12 | executeScript | `document.querySelector('[data-testid="post-title-input"]').value = 'Test Post Title';` | |
+| 13 | executeScript | `document.querySelector('[data-testid="post-content-textarea"]').value = 'Test post content here';` | |
+| 14 | click | `css=[data-testid="post-submit-btn"]` | |
+| 15 | waitForElementPresent | `css=[data-testid="posts-list-title"]` | `10000` |
 
-Expected:
-Password reset works correctly.
+**Expected:** Redirect to posts page.
+
+---
+
+## TC4 – Add Comment
+
+**Email:** `testcomment@test.com`
+
+| # | Command | Target | Value |
+|---|---------|--------|-------|
+| 1–10 | Register + Login | Use TC2 steps with email `testcomment@test.com` | |
+| 11 | open | `/posts/new` | |
+| 12 | executeScript | `document.querySelector('[data-testid="post-title-input"]').value = 'Comment Test Post';` | |
+| 13 | executeScript | `document.querySelector('[data-testid="post-content-textarea"]').value = 'Post for comment test';` | |
+| 14 | click | `css=[data-testid="post-submit-btn"]` | |
+| 15 | waitForElementPresent | `css=[data-testid="posts-list-title"]` | `10000` |
+| 16 | click | `css=.post-card:first-child [data-testid="post-title-link"]` | |
+| 17 | waitForElementPresent | `css=[data-testid="comment-textarea"]` | `10000` |
+| 18 | executeScript | `document.querySelector('[data-testid="comment-textarea"]').value = 'My test comment';` | |
+| 19 | click | `css=[data-testid="comment-submit-btn"]` | |
+| 20 | waitForElementPresent | `css=[data-testid="comment-content"]` | `10000` |
+
+**Expected:** Comment visible on post page.
+
+---
+
+## TC5 – Profile
+
+**Email:** `testprofile@test.com`
+
+| # | Command | Target | Value |
+|---|---------|--------|-------|
+| 1–10 | Register + Login | Use TC2 steps with email `testprofile@test.com` | |
+| 11 | open | `/profile` | |
+| 12 | waitForElementPresent | `css=[data-testid="profile-view-title"]` | `10000` |
+| 13 | waitForElementPresent | `css=[data-testid="profile-user-email"]` | `10000` |
+| 14 | assertText | `css=[data-testid="profile-user-email"]` | `testprofile@test.com` |
+
+**Expected:** Profile loads and email matches registered value.
+
+---
+
+## TC6\_Password\_Reset
+
+**Email:** `testreset@test.com`
+
+| # | Command | Target | Value |
+|---|---------|--------|-------|
+| 1 | open | `/register` | |
+| 2 | executeScript | `document.querySelector('[data-testid="register-name-input"]').value = 'TestUser';` | |
+| 3 | executeScript | `document.querySelector('[data-testid="register-email-input"]').value = 'testreset@test.com';` | |
+| 4 | executeScript | `document.querySelector('[data-testid="register-password-input"]').value = 'OldPass123';` | |
+| 5 | click | `css=[data-testid="register-submit-btn"]` | |
+| 6 | waitForElementPresent | `css=[data-testid="login-submit-btn"]` | `10000` |
+| 7 | open | `/password/forgot` | |
+| 8 | executeScript | `document.querySelector('[data-testid="forgot-email-input"]').value = 'testreset@test.com';` | |
+| 9 | click | `css=[data-testid="forgot-submit-btn"]` | |
+| 10 | open | `http://localhost:8025` | |
+
+**Expected:** Reset email delivered to MailHog.
+
+---
+
+## TC6\_Reset\_Complete
+
+**Note:** Must use a fresh token from MailHog. Always run `TC6_Password_Reset` immediately before this test.
+
+| # | Command | Target | Value |
+|---|---------|--------|-------|
+| 1 | open | `/password/reset?token=<dynamic>` | |
+| 2 | waitForElementPresent | `css=[data-testid="reset-password-input"]` | `10000` |
+| 3 | executeScript | `document.querySelector('[data-testid="reset-password-input"]').value = 'NewPass123';` | |
+| 4 | click | `css=[data-testid="reset-submit-btn"]` | |
+| 5 | waitForElementPresent | `css=[data-testid="login-submit-btn"]` | `10000` |
+| 6 | executeScript | `document.querySelector('[data-testid="login-email-input"]').value = 'testreset@test.com';` | |
+| 7 | executeScript | `document.querySelector('[data-testid="login-password-input"]').value = 'NewPass123';` | |
+| 8 | click | `css=[data-testid="login-submit-btn"]` | |
+| 9 | waitForElementPresent | `css=[data-testid="posts-list-title"]` | `10000` |
+
+**Expected:** Login successful with new password, posts page visible.
+
+---
+
+## Database Cleanup
+
+Run before each full suite execution:
+
+```sql
+DELETE FROM users WHERE email LIKE 'test%@test.com';
+```
+
+---
+
+## Project Structure
+
+```
+e2e/
+  selenium-ide/
+    talkto-e2e.side
+    README.md
+```
+
+---
+
+## Execution Order
+
+1. TC1 – Registration
+2. TC2 – Login
+3. TC3 – Create Post
+4. TC4 – Add Comment
+5. TC5 – Profile
+6. TC6\_Password\_Reset
+7. TC6\_Reset\_Complete
