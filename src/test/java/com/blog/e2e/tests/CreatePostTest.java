@@ -11,8 +11,6 @@ import java.util.UUID;
 
 public class CreatePostTest extends BaseTest {
 
-    private static final String BASE_URL = "http://localhost:8080";
-
     @Test
     void shouldCreatePostSuccessfully() {
 

@@ -8,8 +8,6 @@ import org.junit.jupiter.api.Test;
 
 public class RegisterTest extends BaseTest {
 
-    private static final String BASE_URL = "http://localhost:8080";
-
     @Test
     void shouldRegisterAndLoginSuccessfully() {
 

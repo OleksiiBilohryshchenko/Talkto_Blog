@@ -6,8 +6,6 @@ import org.junit.jupiter.api.Test;
 
 public class LoginTest extends BaseTest {
 
-    private static final String BASE_URL = "http://localhost:8080";
-
     @Test
     void shouldLoginSuccessfully() {
         AuthKeywords auth = new AuthKeywords(driver, BASE_URL);
