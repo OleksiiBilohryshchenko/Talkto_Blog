@@ -1,5 +1,6 @@
 package com.blog.e2e.keywords;
 
+import com.blog.e2e.core.ScreenshotUtils;
 import com.blog.e2e.core.WaitUtils;
 import com.blog.e2e.pages.LoginPage;
 import org.openqa.selenium.WebDriver;
@@ -17,11 +18,14 @@ public class AuthKeywords {
     }
 
     public void loginAs(String email, String password) {
+
         loginPage.open(baseUrl);
         loginPage.enterEmail(email);
         loginPage.enterPassword(password);
         loginPage.clickLogin();
 
         WaitUtils.waitForUrlContains(driver, "/posts");
+
+        ScreenshotUtils.take(driver, "login_success");
     }
 }

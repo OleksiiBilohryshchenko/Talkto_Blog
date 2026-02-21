@@ -2,6 +2,7 @@ package com.blog.e2e.core;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.extension.RegisterExtension;
 import org.openqa.selenium.WebDriver;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -19,6 +20,9 @@ public abstract class BaseTest {
     protected int port;
 
     protected String baseUrl;
+
+    @RegisterExtension
+    static TestFailureWatcher failureWatcher = new TestFailureWatcher();
 
     @BeforeEach
     void setUp() {

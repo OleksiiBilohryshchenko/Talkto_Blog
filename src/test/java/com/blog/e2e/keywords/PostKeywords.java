@@ -1,5 +1,6 @@
 package com.blog.e2e.keywords;
 
+import com.blog.e2e.core.ScreenshotUtils;
 import com.blog.e2e.core.WaitUtils;
 import com.blog.e2e.pages.PostPage;
 import org.openqa.selenium.WebDriver;
@@ -24,6 +25,8 @@ public class PostKeywords {
         postPage.submit();
 
         WaitUtils.waitForUrlContains(driver, "/posts");
+
+        ScreenshotUtils.take(driver, "create_post_success");
     }
 
     public boolean isPostVisible(String title) {
