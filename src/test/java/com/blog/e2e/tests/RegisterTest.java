@@ -11,16 +11,16 @@ public class RegisterTest extends BaseTest {
     @Test
     void shouldRegisterAndLoginSuccessfully() {
 
-        RegisterKeywords register = new RegisterKeywords(driver, BASE_URL);
-        AuthKeywords auth = new AuthKeywords(driver, BASE_URL);
+        RegisterKeywords register = new RegisterKeywords(driver, baseUrl);
+        AuthKeywords auth = new AuthKeywords(driver, baseUrl);
 
         String email = register.registerNewUser("Test User", "password123");
 
         auth.loginAs(email, "password123");
 
         Assertions.assertTrue(
-                driver.getCurrentUrl().contains("/posts"),
-                "User should be redirected to posts after login"
+            driver.getCurrentUrl().contains("/posts"),
+            "User should be redirected to posts after login"
         );
     }
 }

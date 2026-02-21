@@ -14,9 +14,9 @@ public class CreatePostTest extends BaseTest {
     @Test
     void shouldCreatePostSuccessfully() {
 
-        RegisterKeywords register = new RegisterKeywords(driver, BASE_URL);
-        AuthKeywords auth = new AuthKeywords(driver, BASE_URL);
-        PostKeywords post = new PostKeywords(driver, BASE_URL);
+        RegisterKeywords register = new RegisterKeywords(driver, baseUrl);
+        AuthKeywords auth = new AuthKeywords(driver, baseUrl);
+        PostKeywords post = new PostKeywords(driver, baseUrl);
 
         String email = register.registerNewUser("Post User", "password123");
         auth.loginAs(email, "password123");
@@ -26,8 +26,8 @@ public class CreatePostTest extends BaseTest {
         post.createPost(uniqueTitle, "This is automated content.");
 
         Assertions.assertTrue(
-                post.isPostVisible(uniqueTitle),
-                "Created post should be visible in posts list"
+            post.isPostVisible(uniqueTitle),
+            "Created post should be visible in posts list"
         );
     }
 }

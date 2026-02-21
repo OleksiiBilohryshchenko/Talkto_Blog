@@ -8,7 +8,7 @@ public class LoginTest extends BaseTest {
 
     @Test
     void shouldLoginSuccessfully() {
-        AuthKeywords auth = new AuthKeywords(driver, BASE_URL);
+        AuthKeywords auth = new AuthKeywords(driver, baseUrl);
         auth.loginAs("register@gmail.com", "register12345");
     }
 }
