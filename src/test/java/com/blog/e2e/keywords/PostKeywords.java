@@ -3,6 +3,7 @@ package com.blog.e2e.keywords;
 import com.blog.e2e.core.ScreenshotUtils;
 import com.blog.e2e.core.WaitUtils;
 import com.blog.e2e.pages.PostPage;
+import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
 
 public class PostKeywords {
@@ -10,6 +11,9 @@ public class PostKeywords {
     private final WebDriver driver;
     private final PostPage postPage;
     private final String baseUrl;
+
+    private static final By POST_VIEW_TITLE =
+        By.cssSelector("[data-testid='post-view-title']");
 
     public PostKeywords(WebDriver driver, String baseUrl) {
         this.driver = driver;
@@ -30,6 +34,7 @@ public class PostKeywords {
     }
 
     public boolean isPostVisible(String title) {
-        return postPage.isPostVisible(title);
+        var element = WaitUtils.waitForVisibility(driver, POST_VIEW_TITLE);
+        return element.getText().equals(title);
     }
 }
