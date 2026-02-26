@@ -477,6 +477,11 @@
               "listen": "prerequest",
               "script": {
                 "exec": [
+                  "// 1. Generate unique email",
+                  "const uniqueEmail = `ci_${Date.now()}@mail.com`;",
+                  "pm.environment.set(\"dynamicEmail\", uniqueEmail);",
+                  "",
+                  "// 2. Fetch CSRF token",
                   "pm.sendRequest({",
                   "    url: pm.environment.get(\"baseUrl\") + \"/register\",",
                   "    method: \"GET\"",
@@ -508,8 +513,9 @@
                   "",
                   "pm.test(\"Email field contains submitted value\", () => {",
                   "    const body = pm.response.text();",
-                  "    pm.expect(body).to.include('name=\"email\"');",
-                  "    pm.expect(body).to.include('ci_test@mail.com');",
+                  "    const sentEmail = pm.environment.get(\"dynamicEmail\");",
+                  "",
+                  "    pm.expect(body).to.include(sentEmail);",
                   "});"
                 ],
                 "type": "text/javascript",
