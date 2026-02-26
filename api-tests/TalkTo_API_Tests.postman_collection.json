@@ -533,7 +533,7 @@
                 },
                 {
                   "key": "email",
-                  "value": "{{testUserEmail}}",
+                  "value": "{{dynamicEmail}}",
                   "type": "text",
                   "uuid": "15a36a84-3c2b-40cc-b377-2864ab99ba6c"
                 },
