@@ -9,6 +9,21 @@ jobs:
   build:
     runs-on: ubuntu-latest
 
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_DB: talkto
+          POSTGRES_USER: talkto
+          POSTGRES_PASSWORD: talkto
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd="pg_isready -U talkto"
+          --health-interval=10s
+          --health-timeout=5s
+          --health-retries=5
+
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
@@ -46,18 +61,31 @@ jobs:
         with:
           name: cucumber-report
           path: target/cucumber-report.html
+
       - name: Set up Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
+
       - name: Install npm dependencies
         run: npm ci
+
       - name: Start Spring Boot app
+        env:
+          TALKTO_DB_URL: jdbc:postgresql://localhost:5432/talkto
+          TALKTO_DB_USERNAME: talkto
+          TALKTO_DB_PASSWORD: talkto
         run: |
-          ./mvnw spring-boot:run &
-          sleep 20
+          ./mvnw spring-boot:run -Dspring-boot.run.arguments="--server.port=8080" &
+          for i in $(seq 1 30); do
+            curl -s http://localhost:8080/login && break
+            echo "Waiting for app... ($i)"
+            sleep 2
+          done
+
       - name: Run API tests
         run: npm run api:test
+
       - name: Upload Newman HTML report
         if: always()
         uses: actions/upload-artifact@v4
