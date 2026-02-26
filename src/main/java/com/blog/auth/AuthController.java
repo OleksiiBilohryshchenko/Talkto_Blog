@@ -46,6 +46,7 @@ public class AuthController {
 
     } catch (IllegalArgumentException e) {
       model.addAttribute("error", e.getMessage());
+      model.addAttribute("user", user);
       return "register";
     }
   }
