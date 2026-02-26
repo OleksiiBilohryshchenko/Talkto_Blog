@@ -3,6 +3,7 @@ package com.blog.post.service;
 import com.blog.post.domain.Post;
 import com.blog.post.repository.PostRepository;
 import com.blog.user.domain.User;
+import java.util.NoSuchElementException;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -80,11 +81,11 @@ class PostServiceTest {
     @Test
     void findById_notFound() {
         when(postRepository.findByIdWithAuthor(1L))
-                .thenReturn(Optional.empty());
+            .thenReturn(Optional.empty());
 
-        assertThatThrownBy(() ->
-                postService.findById(1L))
-                .isInstanceOf(IllegalArgumentException.class);
+        assertThatThrownBy(() -> postService.findById(1L))
+            .isInstanceOf(NoSuchElementException.class)
+            .hasMessageContaining("Post not found");
     }
 
     @Test
