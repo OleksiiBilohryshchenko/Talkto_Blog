@@ -16,18 +16,15 @@
         By
         <span th:text="${post.author != null ? post.author.name : 'Unknown'}"
               data-testid="post-view-author">
-            Author
         </span>
         •
         <span th:text="${#temporals.format(post.createdAt, 'dd.MM.yyyy HH:mm')}"
               data-testid="post-view-date">
-            Date
         </span>
     </div>
 
     <div th:text="${post.content}"
          data-testid="post-view-content">
-        Content
     </div>
 </div>
 
@@ -39,25 +36,22 @@
     No comments yet.
 </div>
 
-<div th:each="comment : ${comments}"
+<div th:each="c : ${comments}"
      class="comment-card mb-3"
      data-testid="comment-card">
 
     <div class="comment-meta">
-        <strong th:text="${comment.author != null ? comment.author.name : 'Unknown'}"
+        <strong th:text="${c.author != null ? c.author.name : 'Unknown'}"
                 data-testid="comment-author">
-            Author
         </strong>
-        <span th:text="${#temporals.format(comment.createdAt, 'dd.MM.yyyy HH:mm')}"
+        <span th:text="${#temporals.format(c.createdAt, 'dd.MM.yyyy HH:mm')}"
               data-testid="comment-date">
-            Date
         </span>
     </div>
 
     <div class="comment-text"
-         th:text="${comment.content}"
+         th:text="${c.content}"
          data-testid="comment-content">
-        Comment text
     </div>
 </div>
 
@@ -68,15 +62,22 @@
     <h5 class="mb-3">Add comment</h5>
 
     <form th:action="@{/posts/{id}/comments(id=${post.id})}"
+          th:object="${comment}"
           method="post"
           data-testid="comment-form">
 
         <div class="mb-3">
-            <textarea name="content"
+            <textarea th:field="*{content}"
                       class="form-control"
+                      th:classappend="${#fields.hasErrors('content')} ? ' is-invalid' : ''"
                       rows="4"
                       required
                       data-testid="comment-textarea"></textarea>
+
+            <div class="invalid-feedback"
+                 th:if="${#fields.hasErrors('content')}"
+                 th:errors="*{content}">
+            </div>
         </div>
 
         <button type="submit"

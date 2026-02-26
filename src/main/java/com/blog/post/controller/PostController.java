@@ -70,8 +70,12 @@ public class PostController {
     User user = userRepository.findByEmail(authentication.getName())
         .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-    postService.create(post.getTitle(), post.getContent(), user);
+    Post saved = postService.create(
+        post.getTitle(),
+        post.getContent(),
+        user
+    );
 
-    return "redirect:/posts";
+    return "redirect:/posts/" + saved.getId();
   }
 }

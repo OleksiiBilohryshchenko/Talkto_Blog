@@ -1,6 +1,8 @@
 package com.blog.user.service;
 
+import com.blog.user.domain.Role;
 import com.blog.user.domain.User;
+import com.blog.user.repository.RoleRepository;
 import com.blog.user.repository.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -10,11 +12,13 @@ public class UserService {
 
   private final UserRepository userRepository;
   private final PasswordEncoder passwordEncoder;
+  private final RoleRepository roleRepository;
 
   public UserService(UserRepository userRepository,
-      PasswordEncoder passwordEncoder) {
+      PasswordEncoder passwordEncoder, RoleRepository roleRepository) {
     this.userRepository = userRepository;
     this.passwordEncoder = passwordEncoder;
+    this.roleRepository = roleRepository;
   }
 
   public User registerUser(String name, String email, String rawPassword) {
@@ -26,6 +30,11 @@ public class UserService {
     String encodedPassword = passwordEncoder.encode(rawPassword);
 
     User user = new User(name, email, encodedPassword);
+
+    Role userRole = roleRepository.findByName("ROLE_USER")
+        .orElseThrow(() -> new RuntimeException("ROLE_USER not found"));
+
+    user.getRoles().add(userRole);
 
     return userRepository.save(user);
   }

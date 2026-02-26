@@ -1,0 +1,3743 @@
+{
+  "info": {
+    "_postman_id": "b022161d-10e6-4f04-8212-38b43df74591",
+    "name": "TalkTo_API_Tests",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "36348311"
+  },
+  "item": [
+    {
+      "name": "00 - Helpers",
+      "item": [
+        {
+          "name": "login helper",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const html = pm.response.text();",
+                  "const csrfMatch = html.match(/name=\"_csrf\".*?value=\"(.+?)\"/);",
+                  "",
+                  "pm.test(\"CSRF token extracted\", function () {",
+                  "    pm.expect(csrfMatch).to.not.be.null;",
+                  "});",
+                  "",
+                  "if (csrfMatch) {",
+                  "    pm.collectionVariables.set(\"csrfToken\", csrfMatch[1]);",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true,
+            "followRedirects": false
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": []
+            },
+            "url": {
+              "raw": "{{baseUrl}}/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "login helper",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"JSESSIONID cookie is set\", () => {",
+                  "    const jsession = pm.cookies.get(\"JSESSIONID\");",
+                  "    pm.expect(jsession).to.exist;",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "followRedirects": true
+          },
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "username",
+                  "value": "{{testUserEmail}}",
+                  "type": "text",
+                  "uuid": "3897f64b-4cd9-4f93-a0fe-71d636decd7a"
+                },
+                {
+                  "key": "password",
+                  "value": "{{testUserPassword}}",
+                  "type": "text",
+                  "uuid": "c78a235b-6b99-4ad3-9a6b-80c5aa7600dd"
+                },
+                {
+                  "key": "_csrf",
+                  "value": "{{csrfToken}}",
+                  "type": "text",
+                  "uuid": "b1aa5741-21a8-43e0-8573-997c4ab397ac"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "register helper",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const html = pm.response.text();",
+                  "const csrfMatch = html.match(/name=\"_csrf\".*?value=\"(.+?)\"/);",
+                  "if (csrfMatch) {",
+                  "    pm.collectionVariables.set(\"csrfToken\", csrfMatch[1]);",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "register helper",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "name",
+                  "value": "{{dynamicName}}",
+                  "type": "text",
+                  "uuid": "5cf8a9a4-e258-41dd-ad47-40cc8e2d4e82"
+                },
+                {
+                  "key": "email",
+                  "value": "{{dynamicEmail}}",
+                  "type": "text",
+                  "uuid": "55bbc8bf-a4bd-497c-86b0-96ffd6bb6f0d"
+                },
+                {
+                  "key": "password",
+                  "value": "{{testUserPassword}}",
+                  "type": "text",
+                  "uuid": "f14b21b3-0642-4c91-9b82-955b520cc6b6"
+                },
+                {
+                  "key": "_csrf",
+                  "value": "{{csrfToken}}",
+                  "type": "text",
+                  "uuid": "9b726cc0-a874-435e-ab7b-07a39e8cd69d"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "register"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "01 - Public (Unauth)",
+      "item": [
+        {
+          "name": "/",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "",
+                  "pm.test(\"Response time < 1000ms\", () => {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(1000);",
+                  "});",
+                  "",
+                  "pm.test(\"Contains HTML content\", () => {",
+                  "    pm.expect(pm.response.text()).to.include(\"<html\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "followRedirects": true
+          },
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                ""
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "register",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "",
+                  "pm.test(\"Response time < 1000ms\", () => {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(1000);",
+                  "});",
+                  "",
+                  "pm.test(\"Contains registration form fields\", () => {",
+                  "    const html = pm.response.text();",
+                  "    pm.expect(html).to.include('name=\"name\"');",
+                  "    pm.expect(html).to.include('name=\"email\"');",
+                  "    pm.expect(html).to.include('name=\"password\"');",
+                  "    pm.expect(html).to.include('_csrf');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  ""
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": []
+            },
+            "url": {
+              "raw": "{{baseUrl}}/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "",
+                  "pm.test(\"Response time < 1000ms\", () => {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(1000);",
+                  "});",
+                  "",
+                  "pm.test(\"Contains login form fields\", () => {",
+                  "    const html = pm.response.text();",
+                  "    pm.expect(html).to.include('name=\"username\"');",
+                  "    pm.expect(html).to.include('name=\"password\"');",
+                  "    pm.expect(html).to.include('_csrf');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true,
+            "followRedirects": true
+          },
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": []
+            },
+            "url": {
+              "raw": "{{baseUrl}}/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "register",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const ts = Date.now();",
+                  "",
+                  "pm.collectionVariables.set(\"dynamicEmail\", `test_${ts}@mail.com`);",
+                  "pm.collectionVariables.set(\"dynamicName\", `TestUser_${ts}`);",
+                  "",
+                  "pm.sendRequest({",
+                  "    url: pm.environment.get(\"baseUrl\") + \"/register\",",
+                  "    method: \"GET\"",
+                  "}, (err, res) => {",
+                  "    if (err) return;",
+                  "",
+                  "    const match = res.text().match(/name=\"_csrf\".*?value=\"(.+?)\"/);",
+                  "    if (match) {",
+                  "        pm.collectionVariables.set(\"csrfToken\", match[1]);",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 302 redirect\", () => pm.response.to.have.status(302));",
+                  "",
+                  "pm.test(\"Redirects to /login\", () => {",
+                  "    pm.expect(pm.response.headers.get(\"Location\")).to.include(\"/login\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "name",
+                  "value": "{{dynamicName}}",
+                  "type": "text",
+                  "uuid": "4e35ec7e-70d8-47e7-92c6-9cddcf0f0b08"
+                },
+                {
+                  "key": "email",
+                  "value": "{{dynamicEmail}}",
+                  "type": "text",
+                  "uuid": "15a36a84-3c2b-40cc-b377-2864ab99ba6c"
+                },
+                {
+                  "key": "password",
+                  "value": "test1234",
+                  "type": "text",
+                  "uuid": "d881c011-e922-4d7f-b822-a6da5d837b61"
+                },
+                {
+                  "key": "_csrf",
+                  "value": "{{csrfToken}}",
+                  "type": "text",
+                  "uuid": "fb0087af-55af-4ddd-ae73-981c6225ef50"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "register Copy",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.sendRequest({",
+                  "    url: pm.environment.get(\"baseUrl\") + \"/register\",",
+                  "    method: \"GET\"",
+                  "}, (err, res) => {",
+                  "    if (err) return;",
+                  "",
+                  "    const match = res.text().match(/name=\"_csrf\".*?value=\"(.+?)\"/);",
+                  "    if (match) {",
+                  "        pm.collectionVariables.set(\"csrfToken\", match[1]);",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200 — stays on register page\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Still on register form\", () => {",
+                  "    pm.expect(pm.response.text()).to.include('action=\"/register\"');",
+                  "});",
+                  "",
+                  "pm.test(\"Email field contains submitted value\", () => {",
+                  "    pm.expect(pm.response.text()).to.include('value=\"ci_test@mail.com\"');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "followRedirects": true
+          },
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "name",
+                  "value": "TestUser",
+                  "type": "text",
+                  "uuid": "4e35ec7e-70d8-47e7-92c6-9cddcf0f0b08"
+                },
+                {
+                  "key": "email",
+                  "value": "{{testUserEmail}}",
+                  "type": "text",
+                  "uuid": "15a36a84-3c2b-40cc-b377-2864ab99ba6c"
+                },
+                {
+                  "key": "password",
+                  "value": "test1234",
+                  "type": "text",
+                  "uuid": "d881c011-e922-4d7f-b822-a6da5d837b61"
+                },
+                {
+                  "key": "_csrf",
+                  "value": "{{csrfToken}}",
+                  "type": "text",
+                  "uuid": "fb0087af-55af-4ddd-ae73-981c6225ef50"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "register-missing name",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.sendRequest({",
+                  "    url: pm.environment.get(\"baseUrl\") + \"/register\",",
+                  "    method: \"GET\"",
+                  "}, (err, res) => {",
+                  "    if (err) return;",
+                  "",
+                  "    const match = res.text().match(/name=\"_csrf\".*?value=\"(.+?)\"/);",
+                  "    if (match) {",
+                  "        pm.collectionVariables.set(\"csrfToken\", match[1]);",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200 — validation error\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Shows 'Name is required' error\", () => {",
+                  "    pm.expect(pm.response.text()).to.include(\"Name is required\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "name",
+                  "value": "",
+                  "type": "text",
+                  "uuid": "9352afb6-764b-4792-abd8-53e12d47be06"
+                },
+                {
+                  "key": "email",
+                  "value": "test_{{$timestamp}}@mail.com",
+                  "type": "text",
+                  "uuid": "a90bab7e-f2ab-4248-9967-391c73b6530c"
+                },
+                {
+                  "key": "password",
+                  "value": "test1234",
+                  "type": "text",
+                  "uuid": "01edd7d0-0871-4591-8121-ac7622c210f7"
+                },
+                {
+                  "key": "_csrf",
+                  "value": "{{csrfToken}}",
+                  "type": "text",
+                  "uuid": "4b478404-38e3-4b25-8952-0261991fa18a"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "register-invalid email",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.sendRequest({",
+                  "    url: pm.environment.get(\"baseUrl\") + \"/register\",",
+                  "    method: \"GET\"",
+                  "}, (err, res) => {",
+                  "    if (err) return;",
+                  "",
+                  "    const match = res.text().match(/name=\"_csrf\".*?value=\"(.+?)\"/);",
+                  "    if (match) {",
+                  "        pm.collectionVariables.set(\"csrfToken\", match[1]);",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200 — validation error\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Shows 'Invalid email format' error\", () => {",
+                  "    pm.expect(pm.response.text()).to.include(\"Invalid email format\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "name",
+                  "value": "TestUser",
+                  "type": "text",
+                  "uuid": "c0201b54-cea3-4b23-80ba-d2c87a9949ed"
+                },
+                {
+                  "key": "email",
+                  "value": "not-an-email",
+                  "type": "text",
+                  "uuid": "5080dab7-80a2-4c8b-b621-557b7bb29bf3"
+                },
+                {
+                  "key": "password",
+                  "value": "test1234",
+                  "type": "text",
+                  "uuid": "4dc38104-9984-414e-9a27-d16447d4f977"
+                },
+                {
+                  "key": "_csrf",
+                  "value": "{{csrfToken}}",
+                  "type": "text",
+                  "uuid": "712be802-2462-4dad-a86b-5e7a61666ff3"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "register-short password",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.sendRequest({",
+                  "    url: pm.environment.get(\"baseUrl\") + \"/register\",",
+                  "    method: \"GET\"",
+                  "}, (err, res) => {",
+                  "    if (err) return;",
+                  "",
+                  "    const match = res.text().match(/name=\"_csrf\".*?value=\"(.+?)\"/);",
+                  "    if (match) {",
+                  "        pm.collectionVariables.set(\"csrfToken\", match[1]);",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200 — validation error\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Shows password length error\", () => {",
+                  "    pm.expect(pm.response.text())",
+                  "        .to.include(\"Password must be at least 6 characters\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "name",
+                  "value": "TestUser",
+                  "type": "text",
+                  "uuid": "ddf5b43a-c1ac-48ac-9484-8b2f0ca1ee8f"
+                },
+                {
+                  "key": "email",
+                  "value": "test_{{$timestamp}}@mail.com",
+                  "type": "text",
+                  "uuid": "be5aac77-a3d7-47d7-8ffd-13f49183198c"
+                },
+                {
+                  "key": "password",
+                  "value": "12345",
+                  "type": "text",
+                  "uuid": "31b984c9-e2b8-4ee4-8621-f383694d6e97"
+                },
+                {
+                  "key": "_csrf",
+                  "value": "{{csrfToken}}",
+                  "type": "text",
+                  "uuid": "afb0c24e-ac36-4382-a43f-5824113d77f7"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "register-missing csrf",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 403 — CSRF rejected\", () => {",
+                  "    pm.response.to.have.status(403);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "name",
+                  "value": "TestUser",
+                  "type": "text",
+                  "uuid": "9c8d8a19-1b1d-4498-a0ab-aeab38b0bb47"
+                },
+                {
+                  "key": "email",
+                  "value": "test_{{$timestamp}}@mail.com",
+                  "type": "text",
+                  "uuid": "55538e73-7e93-4c09-8142-164706cca65b"
+                },
+                {
+                  "key": "password",
+                  "value": "test1234",
+                  "type": "text",
+                  "uuid": "9112600f-751f-4bc1-9284-c490ab5808f5"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "forgot password page",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => pm.response.to.have.status(200));",
+                  "",
+                  "pm.test(\"Response time < 1000ms\", () => {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(1000);",
+                  "});",
+                  "",
+                  "pm.test(\"Contains email field and CSRF\", () => {",
+                  "    const html = pm.response.text();",
+                  "    pm.expect(html).to.include('name=\"email\"');",
+                  "    pm.expect(html).to.include('_csrf');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/password/forgot",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "password",
+                "forgot"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "forgot password - valid email",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.sendRequest({",
+                  "    url: pm.environment.get(\"baseUrl\") + \"/password/forgot\",",
+                  "    method: \"GET\"",
+                  "}, (err, res) => {",
+                  "    if (err) return;",
+                  "",
+                  "    const match = res.text().match(/name=\"_csrf\".*?value=\"(.+?)\"/);",
+                  "    if (match) {",
+                  "        pm.collectionVariables.set(\"csrfToken\", match[1]);",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200 — success page shown\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Shows reset success message\", () => {",
+                  "    const html = pm.response.text();",
+                  "    pm.expect(html).to.include(\"Reset Link Sent\");",
+                  "    pm.expect(html).to.include(\"If the email exists\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "email",
+                  "value": "{{testUserEmail}}",
+                  "type": "text",
+                  "uuid": "f92bd46d-c9ca-486d-bfc4-cf3355277c7f"
+                },
+                {
+                  "key": "_csrf",
+                  "value": "{{csrfToken}}",
+                  "type": "text",
+                  "uuid": "ee9f0119-e7d3-4921-8396-5a8952c2ed2c"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/password/forgot",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "password",
+                "forgot"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "forgot password - empty email",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.sendRequest({",
+                  "    url: pm.environment.get(\"baseUrl\") + \"/password/forgot\",",
+                  "    method: \"GET\"",
+                  "}, (err, res) => {",
+                  "    if (err) return;",
+                  "",
+                  "    const match = res.text().match(/name=\"_csrf\".*?value=\"(.+?)\"/);",
+                  "    if (match) {",
+                  "        pm.collectionVariables.set(\"csrfToken\", match[1]);",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200 — success page (no enumeration)\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Shows generic reset message\", () => {",
+                  "    const html = pm.response.text();",
+                  "    pm.expect(html).to.include(\"Reset Link Sent\");",
+                  "    pm.expect(html).to.include(\"If the email exists\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "email",
+                  "value": "",
+                  "type": "text",
+                  "uuid": "9e557197-b337-48e0-9d53-f45ea13d671c"
+                },
+                {
+                  "key": "_csrf",
+                  "value": "{{csrfToken}}",
+                  "type": "text",
+                  "uuid": "df13d844-de92-43ea-958b-9b4fdc0ce1fa"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/password/forgot",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "password",
+                "forgot"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "password reset - invalid token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Shows reset error message\", () => {",
+                  "    const html = pm.response.text();",
+                  "    pm.expect(html).to.include(\"Password Reset Error\");",
+                  "    pm.expect(html).to.include(\"Invalid or expired token\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/password/reset?token=invalid-token-12345",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "password",
+                "reset"
+              ],
+              "query": [
+                {
+                  "key": "token",
+                  "value": "invalid-token-12345"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "password reset - invalid token",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "pm.sendRequest({",
+                  "    url: pm.environment.get(\"baseUrl\") + \"/password/forgot\",",
+                  "    method: \"GET\"",
+                  "}, (err, res) => {",
+                  "    if (err) return;",
+                  "",
+                  "    const match = res.text().match(/name=\"_csrf\".*?value=\"(.+?)\"/);",
+                  "    if (match) {",
+                  "        pm.collectionVariables.set(\"csrfToken\", match[1]);",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status 200\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"Shows reset error message\", () => {",
+                  "    const html = pm.response.text();",
+                  "    pm.expect(html).to.include(\"Password Reset Error\");",
+                  "    pm.expect(html).to.include(\"Invalid or expired token\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "token",
+                  "value": "invalid-token-12345",
+                  "type": "text",
+                  "uuid": "a3c364d4-abe1-4672-b43f-a5b53e840caa"
+                },
+                {
+                  "key": "password",
+                  "value": "newpassword123",
+                  "type": "text",
+                  "uuid": "35829f0d-a55a-479e-84d8-d8ac4acf54a8"
+                },
+                {
+                  "key": "_csrf",
+                  "value": "{{csrfToken}}",
+                  "type": "text",
+                  "uuid": "93288719-74c6-44ff-830e-f8770ea092ac"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/password/reset",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "password",
+                "reset"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "02 - Protected (Requires Auth)",
+      "item": [
+        {
+          "name": "posts",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status is 200\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"JSESSIONID cookie exists\", () => {",
+                  "    pm.expect(pm.cookies.get(\"JSESSIONID\")).to.exist;",
+                  "});",
+                  "",
+                  "pm.test(\"Response time < 1000ms\", () => {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(1000);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const baseUrl = pm.environment.get(\"baseUrl\");",
+                  "",
+                  "pm.sendRequest({",
+                  "    url: baseUrl + \"/login\",",
+                  "    method: \"GET\"",
+                  "}, (err, res) => {",
+                  "    if (err) {",
+                  "        console.error(\"Login page failed:\", err);",
+                  "        return;",
+                  "    }",
+                  "",
+                  "    const csrfMatch = res.text().match(/name=\"_csrf\".*?value=\"(.+?)\"/);",
+                  "    if (!csrfMatch) {",
+                  "        console.error(\"CSRF not found on login page\");",
+                  "        return;",
+                  "    }",
+                  "",
+                  "    pm.sendRequest({",
+                  "        url: baseUrl + \"/login\",",
+                  "        method: \"POST\",",
+                  "        header: { \"Content-Type\": \"application/x-www-form-urlencoded\" },",
+                  "        body: {",
+                  "            mode: \"urlencoded\",",
+                  "            urlencoded: [",
+                  "                { key: \"username\", value: pm.environment.get(\"testUserEmail\") },",
+                  "                { key: \"password\", value: pm.environment.get(\"testUserPassword\") },",
+                  "                { key: \"_csrf\", value: csrfMatch[1] }",
+                  "            ]",
+                  "        }",
+                  "    }, (err, res) => {",
+                  "        if (err) {",
+                  "            console.error(\"Login failed:\", err);",
+                  "            return;",
+                  "        }",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "followRedirects": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/posts",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "posts"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "new post form - authenticated",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const baseUrl = pm.environment.get(\"baseUrl\");",
+                  "",
+                  "pm.sendRequest({",
+                  "    url: baseUrl + \"/login\",",
+                  "    method: \"GET\"",
+                  "}, (err, res) => {",
+                  "    if (err) {",
+                  "        console.error(\"Login page failed:\", err);",
+                  "        return;",
+                  "    }",
+                  "",
+                  "    const csrfMatch = res.text().match(/name=\"_csrf\".*?value=\"(.+?)\"/);",
+                  "    if (!csrfMatch) {",
+                  "        console.error(\"CSRF not found on login page\");",
+                  "        return;",
+                  "    }",
+                  "",
+                  "    pm.sendRequest({",
+                  "        url: baseUrl + \"/login\",",
+                  "        method: \"POST\",",
+                  "        header: { \"Content-Type\": \"application/x-www-form-urlencoded\" },",
+                  "        body: {",
+                  "            mode: \"urlencoded\",",
+                  "            urlencoded: [",
+                  "                { key: \"username\", value: pm.environment.get(\"testUserEmail\") },",
+                  "                { key: \"password\", value: pm.environment.get(\"testUserPassword\") },",
+                  "                { key: \"_csrf\", value: csrfMatch[1] }",
+                  "            ]",
+                  "        }",
+                  "    }, (err, res) => {",
+                  "        if (err) {",
+                  "            console.error(\"Login failed:\", err);",
+                  "            return;",
+                  "        }",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"get new post form — status 200\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"get new post form — response time < 1000ms\", () => {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(1000);",
+                  "});",
+                  "",
+                  "pm.test(\"get new post form — contains required form fields\", () => {",
+                  "    const html = pm.response.text();",
+                  "    pm.expect(html).to.include('name=\"title\"');",
+                  "    pm.expect(html).to.include('name=\"content\"');",
+                  "    pm.expect(html).to.include('_csrf');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/posts/new",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "posts",
+                "new"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "post create post - valid",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const baseUrl = pm.environment.get(\"baseUrl\");",
+                  "",
+                  "// login page",
+                  "pm.sendRequest({",
+                  "    url: baseUrl + \"/login\",",
+                  "    method: \"GET\"",
+                  "}, (err, res) => {",
+                  "    if (err) return;",
+                  "",
+                  "    const csrfLogin = res.text().match(/name=\"_csrf\".*?value=\"(.+?)\"/);",
+                  "    if (!csrfLogin) return;",
+                  "",
+                  "    // login",
+                  "    pm.sendRequest({",
+                  "        url: baseUrl + \"/login\",",
+                  "        method: \"POST\",",
+                  "        header: { \"Content-Type\": \"application/x-www-form-urlencoded\" },",
+                  "        body: {",
+                  "            mode: \"urlencoded\",",
+                  "            urlencoded: [",
+                  "                { key: \"username\", value: pm.environment.get(\"testUserEmail\") },",
+                  "                { key: \"password\", value: pm.environment.get(\"testUserPassword\") },",
+                  "                { key: \"_csrf\", value: csrfLogin[1] }",
+                  "            ]",
+                  "        }",
+                  "    }, (err, res) => {",
+                  "        if (err) return;",
+                  "",
+                  "        // get csrf from new post form",
+                  "        pm.sendRequest({",
+                  "            url: baseUrl + \"/posts/new\",",
+                  "            method: \"GET\"",
+                  "        }, (err, res) => {",
+                  "            if (err) return;",
+                  "",
+                  "            const csrfForm = res.text().match(/name=\"_csrf\".*?value=\"(.+?)\"/);",
+                  "            if (csrfForm) {",
+                  "                pm.collectionVariables.set(\"csrfToken\", csrfForm[1]);",
+                  "            }",
+                  "        });",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"post create post — status 302\", () => {",
+                  "    pm.response.to.have.status(302);",
+                  "});",
+                  "",
+                  "pm.test(\"post create post — redirects to /posts\", () => {",
+                  "    pm.expect(pm.response.headers.get(\"Location\")).to.include(\"/posts\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "title",
+                  "value": "test_post_{{$timestamp}}",
+                  "type": "text",
+                  "uuid": "5ea2fdef-c668-4c34-b46b-ce4956575c00"
+                },
+                {
+                  "key": "content",
+                  "value": "automated content",
+                  "type": "text",
+                  "uuid": "66051e27-ad3c-4efe-8ba4-66f830554657"
+                },
+                {
+                  "key": "_csrf",
+                  "value": "{{csrfToken}}",
+                  "type": "text",
+                  "uuid": "2c874b0d-284c-4baa-8c81-2e2a65a6b6b4"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/posts",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "posts"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "post create post - empty title",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const baseUrl = pm.environment.get(\"baseUrl\");",
+                  "",
+                  "// login page",
+                  "pm.sendRequest({",
+                  "    url: baseUrl + \"/login\",",
+                  "    method: \"GET\"",
+                  "}, (err, res) => {",
+                  "    if (err) return;",
+                  "",
+                  "    const csrfLogin = res.text().match(/name=\"_csrf\".*?value=\"(.+?)\"/);",
+                  "    if (!csrfLogin) return;",
+                  "",
+                  "    // login",
+                  "    pm.sendRequest({",
+                  "        url: baseUrl + \"/login\",",
+                  "        method: \"POST\",",
+                  "        header: { \"Content-Type\": \"application/x-www-form-urlencoded\" },",
+                  "        body: {",
+                  "            mode: \"urlencoded\",",
+                  "            urlencoded: [",
+                  "                { key: \"username\", value: pm.environment.get(\"testUserEmail\") },",
+                  "                { key: \"password\", value: pm.environment.get(\"testUserPassword\") },",
+                  "                { key: \"_csrf\", value: csrfLogin[1] }",
+                  "            ]",
+                  "        }",
+                  "    }, (err, res) => {",
+                  "        if (err) return;",
+                  "",
+                  "        // get csrf from new post form",
+                  "        pm.sendRequest({",
+                  "            url: baseUrl + \"/posts/new\",",
+                  "            method: \"GET\"",
+                  "        }, (err, res) => {",
+                  "            if (err) return;",
+                  "",
+                  "            const csrfForm = res.text().match(/name=\"_csrf\".*?value=\"(.+?)\"/);",
+                  "            if (csrfForm) {",
+                  "                pm.collectionVariables.set(\"csrfToken\", csrfForm[1]);",
+                  "            }",
+                  "        });",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"post create post — empty title — status 200\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"post create post — empty title — global error block exists\", () => {",
+                  "    pm.expect(pm.response.text()).to.include('data-testid=\"post-create-global-error\"');",
+                  "});",
+                  "",
+                  "pm.test(\"post create post — empty title — specific error message\", () => {",
+                  "    pm.expect(pm.response.text()).to.include(\"Title is required\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "title",
+                  "value": "",
+                  "type": "text",
+                  "uuid": "9c44c861-2d9f-4e0a-9fa5-98831b91f192"
+                },
+                {
+                  "key": "content",
+                  "value": "some content",
+                  "type": "text",
+                  "uuid": "b23993e1-7d3f-410d-b922-36fcee155433"
+                },
+                {
+                  "key": "_csrf",
+                  "value": "{{csrfToken}}",
+                  "type": "text",
+                  "uuid": "bd6f3e52-abe4-41fd-880e-3084c25d394a"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/posts",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "posts"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "post create post - empty content",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"post create post — empty content — status 200\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"post create post — empty content — global error block exists\", () => {",
+                  "    pm.expect(pm.response.text()).to.include('data-testid=\"post-create-global-error\"');",
+                  "});",
+                  "",
+                  "pm.test(\"post create post — empty content — specific error message\", () => {",
+                  "    pm.expect(pm.response.text()).to.include(\"Content cannot be empty\");",
+                  "});",
+                  "",
+                  "pm.test(\"post create post — empty content — content field marked invalid\", () => {",
+                  "    pm.expect(pm.response.text()).to.include('is-invalid');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "title",
+                  "value": "valid title",
+                  "type": "text",
+                  "uuid": "86ed8882-8d97-4ab2-a1c6-bc708169c590"
+                },
+                {
+                  "key": "content",
+                  "value": "",
+                  "type": "text",
+                  "uuid": "b529cf8d-274a-4875-8191-2caaa0637b1f"
+                },
+                {
+                  "key": "_csrf",
+                  "value": "{{csrfToken}}",
+                  "type": "text",
+                  "uuid": "254d9c4b-2ddf-4e72-8f27-939e17eb572f"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/posts",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "posts"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get profile - authenticated",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const baseUrl = pm.environment.get(\"baseUrl\");",
+                  "",
+                  "// login page",
+                  "pm.sendRequest({",
+                  "    url: baseUrl + \"/login\",",
+                  "    method: \"GET\"",
+                  "}, (err, res) => {",
+                  "    if (err) return;",
+                  "",
+                  "    const csrfLogin = res.text().match(/name=\"_csrf\".*?value=\"(.+?)\"/);",
+                  "    if (!csrfLogin) return;",
+                  "",
+                  "    // login",
+                  "    pm.sendRequest({",
+                  "        url: baseUrl + \"/login\",",
+                  "        method: \"POST\",",
+                  "        header: { \"Content-Type\": \"application/x-www-form-urlencoded\" },",
+                  "        body: {",
+                  "            mode: \"urlencoded\",",
+                  "            urlencoded: [",
+                  "                { key: \"username\", value: pm.environment.get(\"testUserEmail\") },",
+                  "                { key: \"password\", value: pm.environment.get(\"testUserPassword\") },",
+                  "                { key: \"_csrf\", value: csrfLogin[1] }",
+                  "            ]",
+                  "        }",
+                  "    }, (err, res) => {",
+                  "        if (err) return;",
+                  "",
+                  "        // get csrf from new post form",
+                  "        pm.sendRequest({",
+                  "            url: baseUrl + \"/posts/new\",",
+                  "            method: \"GET\"",
+                  "        }, (err, res) => {",
+                  "            if (err) return;",
+                  "",
+                  "            const csrfForm = res.text().match(/name=\"_csrf\".*?value=\"(.+?)\"/);",
+                  "            if (csrfForm) {",
+                  "                pm.collectionVariables.set(\"csrfToken\", csrfForm[1]);",
+                  "            }",
+                  "        });",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"get profile — status 200\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"get profile — response time < 1000ms\", () => {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(1000);",
+                  "});",
+                  "",
+                  "pm.test(\"get profile — contains user email\", () => {",
+                  "    pm.expect(pm.response.text()).to.include(pm.environment.get(\"testUserEmail\"));",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/profile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "profile"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get profile edit form - authenticated",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const baseUrl = pm.environment.get(\"baseUrl\");",
+                  "",
+                  "// login page",
+                  "pm.sendRequest({",
+                  "    url: baseUrl + \"/login\",",
+                  "    method: \"GET\"",
+                  "}, (err, res) => {",
+                  "    if (err) return;",
+                  "",
+                  "    const csrfLogin = res.text().match(/name=\"_csrf\".*?value=\"(.+?)\"/);",
+                  "    if (!csrfLogin) return;",
+                  "",
+                  "    // login",
+                  "    pm.sendRequest({",
+                  "        url: baseUrl + \"/login\",",
+                  "        method: \"POST\",",
+                  "        header: { \"Content-Type\": \"application/x-www-form-urlencoded\" },",
+                  "        body: {",
+                  "            mode: \"urlencoded\",",
+                  "            urlencoded: [",
+                  "                { key: \"username\", value: pm.environment.get(\"testUserEmail\") },",
+                  "                { key: \"password\", value: pm.environment.get(\"testUserPassword\") },",
+                  "                { key: \"_csrf\", value: csrfLogin[1] }",
+                  "            ]",
+                  "        }",
+                  "    }, (err, res) => {",
+                  "        if (err) return;",
+                  "",
+                  "        // get csrf from new post form",
+                  "        pm.sendRequest({",
+                  "            url: baseUrl + \"/posts/new\",",
+                  "            method: \"GET\"",
+                  "        }, (err, res) => {",
+                  "            if (err) return;",
+                  "",
+                  "            const csrfForm = res.text().match(/name=\"_csrf\".*?value=\"(.+?)\"/);",
+                  "            if (csrfForm) {",
+                  "                pm.collectionVariables.set(\"csrfToken\", csrfForm[1]);",
+                  "            }",
+                  "        });",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"get profile edit form — status 200\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"get profile edit form — response time < 1000ms\", () => {",
+                  "    pm.expect(pm.response.responseTime).to.be.below(1000);",
+                  "});",
+                  "",
+                  "pm.test(\"get profile edit form — contains name field and csrf\", () => {",
+                  "    const html = pm.response.text();",
+                  "    pm.expect(html).to.include('name=\"name\"');",
+                  "    pm.expect(html).to.include('_csrf');",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/profile/edit",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "profile",
+                "edit"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "post profile edit - valid",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const baseUrl = pm.environment.get(\"baseUrl\");",
+                  "",
+                  "// login page",
+                  "pm.sendRequest({",
+                  "    url: baseUrl + \"/login\",",
+                  "    method: \"GET\"",
+                  "}, (err, res) => {",
+                  "    if (err) return;",
+                  "",
+                  "    const csrfLogin = res.text().match(/name=\"_csrf\".*?value=\"(.+?)\"/);",
+                  "    if (!csrfLogin) return;",
+                  "",
+                  "    // login",
+                  "    pm.sendRequest({",
+                  "        url: baseUrl + \"/login\",",
+                  "        method: \"POST\",",
+                  "        header: { \"Content-Type\": \"application/x-www-form-urlencoded\" },",
+                  "        body: {",
+                  "            mode: \"urlencoded\",",
+                  "            urlencoded: [",
+                  "                { key: \"username\", value: pm.environment.get(\"testUserEmail\") },",
+                  "                { key: \"password\", value: pm.environment.get(\"testUserPassword\") },",
+                  "                { key: \"_csrf\", value: csrfLogin[1] }",
+                  "            ]",
+                  "        }",
+                  "    }, (err, res) => {",
+                  "        if (err) return;",
+                  "",
+                  "        // get csrf from profile edit form",
+                  "        pm.sendRequest({",
+                  "            url: baseUrl + \"/profile/edit\",",
+                  "            method: \"GET\"",
+                  "        }, (err, res) => {",
+                  "            if (err) return;",
+                  "",
+                  "            const csrfForm = res.text().match(/name=\"_csrf\".*?value=\"(.+?)\"/);",
+                  "            if (csrfForm) {",
+                  "                pm.collectionVariables.set(\"csrfToken\", csrfForm[1]);",
+                  "            }",
+                  "        });",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"post profile edit — status 302\", () => {",
+                  "    pm.response.to.have.status(302);",
+                  "});",
+                  "",
+                  "pm.test(\"post profile edit — redirects to /profile\", () => {",
+                  "    pm.expect(pm.response.headers.get(\"Location\")).to.include(\"/profile\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "name",
+                  "value": "updated_{{$timestamp}}",
+                  "type": "text",
+                  "uuid": "5f600212-6f08-4d15-9bdd-7c014135ea0b"
+                },
+                {
+                  "key": "_csrf",
+                  "value": "{{csrfToken}}",
+                  "type": "text",
+                  "uuid": "89f1d3a9-3e50-4b31-915e-37db6842a77b"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/profile/edit",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "profile",
+                "edit"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "post logout - authenticated",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const baseUrl = pm.environment.get(\"baseUrl\");",
+                  "",
+                  "// login page",
+                  "pm.sendRequest({",
+                  "    url: baseUrl + \"/login\",",
+                  "    method: \"GET\"",
+                  "}, (err, res) => {",
+                  "    if (err) return;",
+                  "",
+                  "    const csrfLogin = res.text().match(/name=\"_csrf\".*?value=\"(.+?)\"/);",
+                  "    if (!csrfLogin) return;",
+                  "",
+                  "    // login",
+                  "    pm.sendRequest({",
+                  "        url: baseUrl + \"/login\",",
+                  "        method: \"POST\",",
+                  "        header: { \"Content-Type\": \"application/x-www-form-urlencoded\" },",
+                  "        body: {",
+                  "            mode: \"urlencoded\",",
+                  "            urlencoded: [",
+                  "                { key: \"username\", value: pm.environment.get(\"testUserEmail\") },",
+                  "                { key: \"password\", value: pm.environment.get(\"testUserPassword\") },",
+                  "                { key: \"_csrf\", value: csrfLogin[1] }",
+                  "            ]",
+                  "        }",
+                  "    }, (err, res) => {",
+                  "        if (err) return;",
+                  "",
+                  "        // get csrf from posts page (navbar logout form)",
+                  "        pm.sendRequest({",
+                  "            url: baseUrl + \"/posts\",",
+                  "            method: \"GET\"",
+                  "        }, (err, res) => {",
+                  "            if (err) return;",
+                  "",
+                  "            const csrfForm = res.text().match(/name=\"_csrf\".*?value=\"(.+?)\"/);",
+                  "            if (csrfForm) {",
+                  "                pm.collectionVariables.set(\"csrfToken\", csrfForm[1]);",
+                  "            }",
+                  "        });",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"post logout — status 302\", () => {",
+                  "    pm.response.to.have.status(302);",
+                  "});",
+                  "",
+                  "pm.test(\"post logout — redirects to login?logout\", () => {",
+                  "    pm.expect(pm.response.headers.get(\"Location\")).to.include(\"/login?logout\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "_csrf",
+                  "value": "{{csrfToken}}",
+                  "type": "text",
+                  "uuid": "5163225b-2917-4825-b7b3-194f4007d928"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/logout",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "logout"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get view created post - dynamic",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const baseUrl = pm.environment.get(\"baseUrl\");",
+                  "const email = pm.environment.get(\"testUserEmail\");",
+                  "const password = pm.environment.get(\"testUserPassword\");",
+                  "",
+                  "const uniqueTitle = \"post_\" + Date.now();",
+                  "const uniqueContent = \"content_\" + Date.now();",
+                  "",
+                  "pm.collectionVariables.set(\"uniqueTitle\", uniqueTitle);",
+                  "pm.collectionVariables.set(\"uniqueContent\", uniqueContent);",
+                  "",
+                  "// GET login page",
+                  "pm.sendRequest({",
+                  "    url: baseUrl + \"/login\",",
+                  "    method: \"GET\"",
+                  "}, function (err, res) {",
+                  "",
+                  "    const loginCsrf = res.text().match(/name=\"_csrf\".*?value=\"(.+?)\"/)[1];",
+                  "",
+                  "    // POST login",
+                  "    pm.sendRequest({",
+                  "        url: baseUrl + \"/login\",",
+                  "        method: \"POST\",",
+                  "        header: { \"Content-Type\": \"application/x-www-form-urlencoded\" },",
+                  "        body: {",
+                  "            mode: \"urlencoded\",",
+                  "            urlencoded: [",
+                  "                { key: \"username\", value: email },",
+                  "                { key: \"password\", value: password },",
+                  "                { key: \"_csrf\", value: loginCsrf }",
+                  "            ]",
+                  "        },",
+                  "        followRedirect: false",
+                  "    }, function () {",
+                  "",
+                  "        // GET new post form (csrf)",
+                  "        pm.sendRequest({",
+                  "            url: baseUrl + \"/posts/new\",",
+                  "            method: \"GET\"",
+                  "        }, function (err2, res2) {",
+                  "",
+                  "            const postCsrf = res2.text().match(/name=\"_csrf\".*?value=\"(.+?)\"/)[1];",
+                  "",
+                  "            // CREATE post",
+                  "            pm.sendRequest({",
+                  "                url: baseUrl + \"/posts\",",
+                  "                method: \"POST\",",
+                  "                header: { \"Content-Type\": \"application/x-www-form-urlencoded\" },",
+                  "                body: {",
+                  "                    mode: \"urlencoded\",",
+                  "                    urlencoded: [",
+                  "                        { key: \"title\", value: uniqueTitle },",
+                  "                        { key: \"content\", value: uniqueContent },",
+                  "                        { key: \"_csrf\", value: postCsrf }",
+                  "                    ]",
+                  "                },",
+                  "                followRedirect: false",
+                  "            }, function () {",
+                  "",
+                  "                // GET posts list to extract newest ID",
+                  "                pm.sendRequest({",
+                  "                    url: baseUrl + \"/posts\",",
+                  "                    method: \"GET\"",
+                  "                }, function (err3, res3) {",
+                  "",
+                  "                    const match = res3.text().match(/href=\"\\/posts\\/(\\d+)\"/);",
+                  "",
+                  "                    if (!match) {",
+                  "                        console.log(\"Could not extract post ID from list\");",
+                  "                        return;",
+                  "                    }",
+                  "",
+                  "                    const createdPostId = match[1];",
+                  "                    pm.collectionVariables.set(\"createdPostId\", createdPostId);",
+                  "",
+                  "                    console.log(\"Created post ID:\", createdPostId);",
+                  "                });",
+                  "            });",
+                  "        });",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"get view created post — status 200\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"get view created post — contains dynamic title\", () => {",
+                  "    const title = pm.collectionVariables.get(\"uniqueTitle\");",
+                  "    pm.expect(pm.response.text()).to.include(title);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/posts/{{createdPostId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "posts",
+                "{{createdPostId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "post create comment - valid - dynamic",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const baseUrl = pm.environment.get(\"baseUrl\");",
+                  "const email = pm.environment.get(\"testUserEmail\");",
+                  "const password = pm.environment.get(\"testUserPassword\");",
+                  "",
+                  "const uniqueTitle = \"post_\" + Date.now();",
+                  "const uniqueContent = \"content_\" + Date.now();",
+                  "",
+                  "pm.collectionVariables.set(\"uniqueTitle\", uniqueTitle);",
+                  "pm.collectionVariables.set(\"uniqueContent\", uniqueContent);",
+                  "",
+                  "// 1. GET login page",
+                  "pm.sendRequest({",
+                  "    url: baseUrl + \"/login\",",
+                  "    method: \"GET\"",
+                  "}, function (err, res) {",
+                  "",
+                  "    const loginCsrfMatch = res.text().match(/name=\"_csrf\".*?value=\"(.+?)\"/);",
+                  "    if (!loginCsrfMatch) return;",
+                  "",
+                  "    const loginCsrf = loginCsrfMatch[1];",
+                  "",
+                  "    // 2. POST login",
+                  "    pm.sendRequest({",
+                  "        url: baseUrl + \"/login\",",
+                  "        method: \"POST\",",
+                  "        header: { \"Content-Type\": \"application/x-www-form-urlencoded\" },",
+                  "        body: {",
+                  "            mode: \"urlencoded\",",
+                  "            urlencoded: [",
+                  "                { key: \"username\", value: email },",
+                  "                { key: \"password\", value: password },",
+                  "                { key: \"_csrf\", value: loginCsrf }",
+                  "            ]",
+                  "        },",
+                  "        followRedirect: false",
+                  "    }, function () {",
+                  "",
+                  "        // 3. GET new post form",
+                  "        pm.sendRequest({",
+                  "            url: baseUrl + \"/posts/new\",",
+                  "            method: \"GET\"",
+                  "        }, function (err2, res2) {",
+                  "",
+                  "            const postCsrfMatch = res2.text().match(/name=\"_csrf\".*?value=\"(.+?)\"/);",
+                  "            if (!postCsrfMatch) return;",
+                  "",
+                  "            const postCsrf = postCsrfMatch[1];",
+                  "",
+                  "            // 4. CREATE post",
+                  "            pm.sendRequest({",
+                  "                url: baseUrl + \"/posts\",",
+                  "                method: \"POST\",",
+                  "                header: { \"Content-Type\": \"application/x-www-form-urlencoded\" },",
+                  "                body: {",
+                  "                    mode: \"urlencoded\",",
+                  "                    urlencoded: [",
+                  "                        { key: \"title\", value: uniqueTitle },",
+                  "                        { key: \"content\", value: uniqueContent },",
+                  "                        { key: \"_csrf\", value: postCsrf }",
+                  "                    ]",
+                  "                },",
+                  "                followRedirect: false",
+                  "            }, function () {",
+                  "",
+                  "                // 5. GET posts list",
+                  "                pm.sendRequest({",
+                  "                    url: baseUrl + \"/posts\",",
+                  "                    method: \"GET\"",
+                  "                }, function (err3, res3) {",
+                  "",
+                  "                    const idMatch = res3.text().match(/href=\"\\/posts\\/(\\d+)\"/);",
+                  "                    if (!idMatch) return;",
+                  "",
+                  "                    const createdPostId = idMatch[1];",
+                  "                    pm.collectionVariables.set(\"createdPostId\", createdPostId);",
+                  "",
+                  "                    // 6. GET created post to extract csrf for comment",
+                  "                    pm.sendRequest({",
+                  "                        url: baseUrl + \"/posts/\" + createdPostId,",
+                  "                        method: \"GET\"",
+                  "                    }, function (err4, res4) {",
+                  "",
+                  "                        const csrfMatch = res4.text().match(/name=\"_csrf\".*?value=\"(.+?)\"/);",
+                  "                        if (!csrfMatch) return;",
+                  "",
+                  "                        pm.collectionVariables.set(\"csrfToken\", csrfMatch[1]);",
+                  "                    });",
+                  "                });",
+                  "            });",
+                  "        });",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"post create comment — status 302\", () => {",
+                  "    pm.response.to.have.status(302);",
+                  "});",
+                  "",
+                  "pm.test(\"post create comment — redirects back to post\", () => {",
+                  "    pm.expect(pm.response.headers.get(\"Location\"))",
+                  "      .to.include(\"/posts/\" + pm.collectionVariables.get(\"createdPostId\"));",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "content",
+                  "value": "comment_{{$timestamp}}",
+                  "type": "text",
+                  "uuid": "bf48a623-8759-45ce-83b5-70aa8631eadd"
+                },
+                {
+                  "key": "_csrf",
+                  "value": "{{csrfToken}}",
+                  "type": "text",
+                  "uuid": "ec887556-8dc1-4089-978a-9c6ed97158a0"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/posts/{{createdPostId}}/comments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "posts",
+                "{{createdPostId}}",
+                "comments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "post create comment - empty content - dynamic",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const baseUrl = pm.environment.get(\"baseUrl\");",
+                  "const email = pm.environment.get(\"testUserEmail\");",
+                  "const password = pm.environment.get(\"testUserPassword\");",
+                  "",
+                  "const uniqueTitle = \"post_\" + Date.now();",
+                  "const uniqueContent = \"content_\" + Date.now();",
+                  "",
+                  "pm.collectionVariables.set(\"uniqueTitle\", uniqueTitle);",
+                  "pm.collectionVariables.set(\"uniqueContent\", uniqueContent);",
+                  "",
+                  "// 1. GET login page",
+                  "pm.sendRequest({",
+                  "    url: baseUrl + \"/login\",",
+                  "    method: \"GET\"",
+                  "}, function (err, res) {",
+                  "",
+                  "    const loginCsrfMatch = res.text().match(/name=\"_csrf\".*?value=\"(.+?)\"/);",
+                  "    if (!loginCsrfMatch) return;",
+                  "",
+                  "    const loginCsrf = loginCsrfMatch[1];",
+                  "",
+                  "    // 2. POST login",
+                  "    pm.sendRequest({",
+                  "        url: baseUrl + \"/login\",",
+                  "        method: \"POST\",",
+                  "        header: { \"Content-Type\": \"application/x-www-form-urlencoded\" },",
+                  "        body: {",
+                  "            mode: \"urlencoded\",",
+                  "            urlencoded: [",
+                  "                { key: \"username\", value: email },",
+                  "                { key: \"password\", value: password },",
+                  "                { key: \"_csrf\", value: loginCsrf }",
+                  "            ]",
+                  "        },",
+                  "        followRedirect: false",
+                  "    }, function () {",
+                  "",
+                  "        // 3. GET new post form",
+                  "        pm.sendRequest({",
+                  "            url: baseUrl + \"/posts/new\",",
+                  "            method: \"GET\"",
+                  "        }, function (err2, res2) {",
+                  "",
+                  "            const postCsrfMatch = res2.text().match(/name=\"_csrf\".*?value=\"(.+?)\"/);",
+                  "            if (!postCsrfMatch) return;",
+                  "",
+                  "            const postCsrf = postCsrfMatch[1];",
+                  "",
+                  "            // 4. CREATE post",
+                  "            pm.sendRequest({",
+                  "                url: baseUrl + \"/posts\",",
+                  "                method: \"POST\",",
+                  "                header: { \"Content-Type\": \"application/x-www-form-urlencoded\" },",
+                  "                body: {",
+                  "                    mode: \"urlencoded\",",
+                  "                    urlencoded: [",
+                  "                        { key: \"title\", value: uniqueTitle },",
+                  "                        { key: \"content\", value: uniqueContent },",
+                  "                        { key: \"_csrf\", value: postCsrf }",
+                  "                    ]",
+                  "                },",
+                  "                followRedirect: false",
+                  "            }, function () {",
+                  "",
+                  "                // 5. GET posts list",
+                  "                pm.sendRequest({",
+                  "                    url: baseUrl + \"/posts\",",
+                  "                    method: \"GET\"",
+                  "                }, function (err3, res3) {",
+                  "",
+                  "                    const idMatch = res3.text().match(/href=\"\\/posts\\/(\\d+)\"/);",
+                  "                    if (!idMatch) return;",
+                  "",
+                  "                    const createdPostId = idMatch[1];",
+                  "                    pm.collectionVariables.set(\"createdPostId\", createdPostId);",
+                  "",
+                  "                    // 6. GET created post to extract csrf for comment",
+                  "                    pm.sendRequest({",
+                  "                        url: baseUrl + \"/posts/\" + createdPostId,",
+                  "                        method: \"GET\"",
+                  "                    }, function (err4, res4) {",
+                  "",
+                  "                        const csrfMatch = res4.text().match(/name=\"_csrf\".*?value=\"(.+?)\"/);",
+                  "                        if (!csrfMatch) return;",
+                  "",
+                  "                        pm.collectionVariables.set(\"csrfToken\", csrfMatch[1]);",
+                  "                    });",
+                  "                });",
+                  "            });",
+                  "        });",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"post create comment — empty — status 200\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"post create comment — empty — error block exists\", () => {",
+                  "    pm.expect(pm.response.text()).to.include(\"invalid-feedback\");",
+                  "});",
+                  "",
+                  "pm.test(\"post create comment — empty — validation message\", () => {",
+                  "    pm.expect(pm.response.text()).to.include(\"cannot be empty\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "content",
+                  "value": "",
+                  "type": "text",
+                  "uuid": "4abd0a7e-83f3-432c-9406-5c7a01db2c5b"
+                },
+                {
+                  "key": "_csrf",
+                  "value": "{{csrfToken}}",
+                  "type": "text",
+                  "uuid": "4157cc57-1721-42d1-8a4a-69f8a9bcc7c1"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/posts/{{createdPostId}}/comments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "posts",
+                "{{createdPostId}}",
+                "comments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "post create comment - too short - dynamic",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const baseUrl = pm.environment.get(\"baseUrl\");",
+                  "const email = pm.environment.get(\"testUserEmail\");",
+                  "const password = pm.environment.get(\"testUserPassword\");",
+                  "",
+                  "const uniqueTitle = \"post_\" + Date.now();",
+                  "const uniqueContent = \"content_\" + Date.now();",
+                  "",
+                  "pm.collectionVariables.set(\"uniqueTitle\", uniqueTitle);",
+                  "pm.collectionVariables.set(\"uniqueContent\", uniqueContent);",
+                  "",
+                  "// 1. GET login page",
+                  "pm.sendRequest({",
+                  "    url: baseUrl + \"/login\",",
+                  "    method: \"GET\"",
+                  "}, function (err, res) {",
+                  "",
+                  "    const loginCsrfMatch = res.text().match(/name=\"_csrf\".*?value=\"(.+?)\"/);",
+                  "    if (!loginCsrfMatch) return;",
+                  "",
+                  "    const loginCsrf = loginCsrfMatch[1];",
+                  "",
+                  "    // 2. POST login",
+                  "    pm.sendRequest({",
+                  "        url: baseUrl + \"/login\",",
+                  "        method: \"POST\",",
+                  "        header: { \"Content-Type\": \"application/x-www-form-urlencoded\" },",
+                  "        body: {",
+                  "            mode: \"urlencoded\",",
+                  "            urlencoded: [",
+                  "                { key: \"username\", value: email },",
+                  "                { key: \"password\", value: password },",
+                  "                { key: \"_csrf\", value: loginCsrf }",
+                  "            ]",
+                  "        },",
+                  "        followRedirect: false",
+                  "    }, function () {",
+                  "",
+                  "        // 3. GET new post form",
+                  "        pm.sendRequest({",
+                  "            url: baseUrl + \"/posts/new\",",
+                  "            method: \"GET\"",
+                  "        }, function (err2, res2) {",
+                  "",
+                  "            const postCsrfMatch = res2.text().match(/name=\"_csrf\".*?value=\"(.+?)\"/);",
+                  "            if (!postCsrfMatch) return;",
+                  "",
+                  "            const postCsrf = postCsrfMatch[1];",
+                  "",
+                  "            // 4. CREATE post",
+                  "            pm.sendRequest({",
+                  "                url: baseUrl + \"/posts\",",
+                  "                method: \"POST\",",
+                  "                header: { \"Content-Type\": \"application/x-www-form-urlencoded\" },",
+                  "                body: {",
+                  "                    mode: \"urlencoded\",",
+                  "                    urlencoded: [",
+                  "                        { key: \"title\", value: uniqueTitle },",
+                  "                        { key: \"content\", value: uniqueContent },",
+                  "                        { key: \"_csrf\", value: postCsrf }",
+                  "                    ]",
+                  "                },",
+                  "                followRedirect: false",
+                  "            }, function () {",
+                  "",
+                  "                // 5. GET posts list",
+                  "                pm.sendRequest({",
+                  "                    url: baseUrl + \"/posts\",",
+                  "                    method: \"GET\"",
+                  "                }, function (err3, res3) {",
+                  "",
+                  "                    const idMatch = res3.text().match(/href=\"\\/posts\\/(\\d+)\"/);",
+                  "                    if (!idMatch) return;",
+                  "",
+                  "                    const createdPostId = idMatch[1];",
+                  "                    pm.collectionVariables.set(\"createdPostId\", createdPostId);",
+                  "",
+                  "                    // 6. GET created post to extract csrf for comment",
+                  "                    pm.sendRequest({",
+                  "                        url: baseUrl + \"/posts/\" + createdPostId,",
+                  "                        method: \"GET\"",
+                  "                    }, function (err4, res4) {",
+                  "",
+                  "                        const csrfMatch = res4.text().match(/name=\"_csrf\".*?value=\"(.+?)\"/);",
+                  "                        if (!csrfMatch) return;",
+                  "",
+                  "                        pm.collectionVariables.set(\"csrfToken\", csrfMatch[1]);",
+                  "                    });",
+                  "                });",
+                  "            });",
+                  "        });",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"post create comment — too short — status 200\", () => {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"post create comment — too short — validation message\", () => {",
+                  "    pm.expect(pm.response.text())",
+                  "      .to.include(\"Comment must be between 2 and 2000 characters\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "content",
+                  "value": "a",
+                  "type": "text",
+                  "uuid": "f6781a8f-12c8-42e6-89c9-dead32d0d828"
+                },
+                {
+                  "key": "_csrf",
+                  "value": "{{csrfToken}}",
+                  "type": "text",
+                  "uuid": "79d40fed-97c3-470b-a1ce-f1ce9bbb1e00"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/posts/{{createdPostId}}/comments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "posts",
+                "{{createdPostId}}",
+                "comments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get view post - non existing - 404",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"get view post — non existing — status 404\", () => {",
+                  "    pm.response.to.have.status(404);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/posts/999999999",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "posts",
+                "999999999"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "post create comment - non existing post - 404",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"post create comment — non existing post — status 404\", () => {",
+                  "    pm.response.to.have.status(404);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "content",
+                  "value": "test",
+                  "type": "text",
+                  "uuid": "d50d5b67-a1e3-442d-8e36-186e4c0ac3c0"
+                },
+                {
+                  "key": "_csrf",
+                  "value": "{{csrfToken}}",
+                  "type": "text",
+                  "uuid": "f26c59fe-b9b3-4765-a246-89854953cebe"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/posts/999999999/comments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "posts",
+                "999999999",
+                "comments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get admin as user",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const baseUrl = pm.environment.get(\"baseUrl\");",
+                  "",
+                  "pm.sendRequest({ url: baseUrl + \"/login\", method: \"GET\" }, (err, res) => {",
+                  "    if (err) return;",
+                  "",
+                  "    const csrf = res.text().match(/name=\"_csrf\".*?value=\"(.+?)\"/);",
+                  "    if (!csrf) return;",
+                  "",
+                  "    pm.sendRequest({",
+                  "        url: baseUrl + \"/login\",",
+                  "        method: \"POST\",",
+                  "        header: { \"Content-Type\": \"application/x-www-form-urlencoded\" },",
+                  "        body: {",
+                  "            mode: \"urlencoded\",",
+                  "            urlencoded: [",
+                  "                { key: \"username\", value: pm.environment.get(\"testUserEmail\") },",
+                  "                { key: \"password\", value: pm.environment.get(\"testUserPassword\") },",
+                  "                { key: \"_csrf\", value: csrf[1] }",
+                  "            ]",
+                  "        }",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"status 403\", () => {",
+                  "    pm.response.to.have.status(403);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/admin/test",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "test"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "03 - Security",
+      "item": [
+        {
+          "name": "get posts no auth",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const jar = pm.cookies.jar();",
+                  "",
+                  "jar.clear(pm.environment.get(\"baseUrl\"), function (error) {",
+                  "    if (error) {",
+                  "        console.log(\"Cookie clear error:\", error);",
+                  "    } else {",
+                  "        console.log(\"Cookies cleared for baseUrl\");",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"status 302\", () => {",
+                  "    pm.response.to.have.status(302);",
+                  "});",
+                  "",
+                  "pm.test(\"redirect to login\", () => {",
+                  "    pm.expect(pm.response.headers.get(\"Location\")).to.include(\"/login\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/posts",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "posts"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "post create no auth",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const jar = pm.cookies.jar();",
+                  "",
+                  "jar.clear(pm.environment.get(\"baseUrl\"), function (error) {",
+                  "    if (error) {",
+                  "        console.log(\"Cookie clear error:\", error);",
+                  "    } else {",
+                  "        console.log(\"Cookies cleared for baseUrl\");",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"status 403\", () => {",
+                  "    pm.response.to.have.status(403);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "test",
+                  "value": "test",
+                  "type": "text",
+                  "uuid": "b9af810a-1097-49df-928b-4fc6aec1ab18"
+                },
+                {
+                  "key": "content",
+                  "value": "test",
+                  "type": "text",
+                  "uuid": "64d5cbb1-d0cd-4575-aa14-047534808f41"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/posts",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "posts"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get profile no auth",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const jar = pm.cookies.jar();",
+                  "",
+                  "jar.clear(pm.environment.get(\"baseUrl\"), function (error) {",
+                  "    if (error) {",
+                  "        console.log(\"Cookie clear error:\", error);",
+                  "    } else {",
+                  "        console.log(\"Cookies cleared for baseUrl\");",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"status 302\", () => {",
+                  "    pm.response.to.have.status(302);",
+                  "});",
+                  "",
+                  "pm.test(\"redirect to login\", () => {",
+                  "    pm.expect(pm.response.headers.get(\"Location\")).to.include(\"/login\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/profile",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "profile"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get admin no auth",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const jar = pm.cookies.jar();",
+                  "",
+                  "jar.clear(pm.environment.get(\"baseUrl\"), function (error) {",
+                  "    if (error) {",
+                  "        console.log(\"Cookie clear error:\", error);",
+                  "    } else {",
+                  "        console.log(\"Cookies cleared for baseUrl\");",
+                  "    }",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"status 302\", function () {",
+                  "    pm.response.to.have.status(302);",
+                  "});",
+                  "",
+                  "pm.test(\"redirect to login\", function () {",
+                  "    pm.expect(pm.response.headers.get(\"Location\")).to.include(\"/login\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/admin/test",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "admin",
+                "test"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "post create no csrf",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const baseUrl = pm.environment.get(\"baseUrl\");",
+                  "",
+                  "pm.sendRequest({ url: baseUrl + \"/login\", method: \"GET\" }, (err, res) => {",
+                  "    if (err) return;",
+                  "",
+                  "    const csrf = res.text().match(/name=\"_csrf\".*?value=\"(.+?)\"/);",
+                  "    if (!csrf) return;",
+                  "",
+                  "    pm.sendRequest({",
+                  "        url: baseUrl + \"/login\",",
+                  "        method: \"POST\",",
+                  "        header: { \"Content-Type\": \"application/x-www-form-urlencoded\" },",
+                  "        body: {",
+                  "            mode: \"urlencoded\",",
+                  "            urlencoded: [",
+                  "                { key: \"username\", value: pm.environment.get(\"testUserEmail\") },",
+                  "                { key: \"password\", value: pm.environment.get(\"testUserPassword\") },",
+                  "                { key: \"_csrf\", value: csrf[1] }",
+                  "            ]",
+                  "        }",
+                  "    });",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"status 403\", () => {",
+                  "    pm.response.to.have.status(403);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "title",
+                  "value": "test",
+                  "type": "text",
+                  "uuid": "9fd7ca03-bd35-4dda-be6d-c475c1597485"
+                },
+                {
+                  "key": "content",
+                  "value": "test",
+                  "type": "text",
+                  "uuid": "0bcb4ff0-e8df-4e40-8864-ecb053d01808"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/posts",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "posts"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "04 - e2e",
+      "item": [
+        {
+          "name": "get register page e2e",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"status 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const body = pm.response.text();",
+                  "const csrfMatch = body.match(/name=\"_csrf\" value=\"([^\"]+)\"/);",
+                  "",
+                  "if (csrfMatch) {",
+                  "    pm.environment.set(\"e2e_csrf\", csrfMatch[1]);",
+                  "} else {",
+                  "    console.error(\"CSRF not found\");",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "register e2e",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"status 302\", function () {",
+                  "    pm.response.to.have.status(302);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const timestamp = Date.now();",
+                  "const email = \"e2e_\" + timestamp + \"@mail.com\";",
+                  "",
+                  "pm.environment.set(\"e2e_email\", email);",
+                  "pm.environment.set(\"e2e_password\", \"Password123\");"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "name",
+                  "value": "E2E_{{$timestamp}}",
+                  "type": "text",
+                  "uuid": "4c6efb06-7328-4f2d-b6b5-38054b22d5fd"
+                },
+                {
+                  "key": "email",
+                  "value": "{{e2e_email}}",
+                  "type": "text",
+                  "uuid": "69c324c2-ea5b-453a-8195-c88aa651ac9e"
+                },
+                {
+                  "key": "password",
+                  "value": "{{e2e_password}}",
+                  "type": "text",
+                  "uuid": "9234d51f-33a8-4aa7-a058-aee1d414d0fa"
+                },
+                {
+                  "key": "_csrf",
+                  "value": "{{e2e_csrf}}",
+                  "type": "text",
+                  "uuid": "a5716f3e-7554-4961-b6a9-9e4f2b18482b"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get login page e2e",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"status 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const body = pm.response.text();",
+                  "const csrfMatch = body.match(/name=\"_csrf\" value=\"([^\"]+)\"/);",
+                  "",
+                  "if (csrfMatch) {",
+                  "    pm.environment.set(\"e2e_login_csrf\", csrfMatch[1]);",
+                  "} else {",
+                  "    console.error(\"Login CSRF not found\");",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "login e2e",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"status 200 after redirect\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"session cookie exists\", function () {",
+                  "    pm.expect(pm.cookies.has(\"JSESSIONID\")).to.be.true;",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "username",
+                  "value": "{{e2e_email}}",
+                  "type": "text",
+                  "uuid": "7524dd3f-8032-467a-8a9e-6e3f2719b405"
+                },
+                {
+                  "key": "password",
+                  "value": "{{e2e_password}}",
+                  "type": "text",
+                  "uuid": "98b766d5-5ccf-4bf9-b7e4-88f8e587f1ef"
+                },
+                {
+                  "key": "_csrf",
+                  "value": "{{e2e_login_csrf}}",
+                  "type": "text",
+                  "uuid": "fbedf31d-a4bd-4c02-b914-74fd4eea9674"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "get new post page e2e",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"status 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const body = pm.response.text();",
+                  "const csrfMatch = body.match(/name=\"_csrf\" value=\"([^\"]+)\"/);",
+                  "",
+                  "if (csrfMatch) {",
+                  "    pm.environment.set(\"e2e_post_csrf\", csrfMatch[1]);",
+                  "} else {",
+                  "    console.error(\"Post CSRF not found\");",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/posts/new",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "posts",
+                "new"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create post e2e",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"status 302 after create\", function () {",
+                  "    pm.response.to.have.status(302);",
+                  "});",
+                  "",
+                  "const location = pm.response.headers.get(\"Location\");",
+                  "",
+                  "if (location) {",
+                  "    const match = location.match(/\\/posts\\/(\\d+)/);",
+                  "    if (match) {",
+                  "        pm.environment.set(\"e2e_post_id\", match[1]);",
+                  "    }",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "title",
+                  "value": "E2E Post {{$timestamp}}",
+                  "type": "text",
+                  "uuid": "60e08ae8-0a08-4887-89cf-06173ace0a0e"
+                },
+                {
+                  "key": "content",
+                  "value": "This is an e2e test post",
+                  "type": "text",
+                  "uuid": "bf9c8489-8c90-466c-a8d7-922bafc5037c"
+                },
+                {
+                  "key": "_csrf",
+                  "value": "{{e2e_post_csrf}}",
+                  "type": "text",
+                  "uuid": "0ee9aa17-2c35-4fba-b12c-ca09c829dddc"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/posts",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "posts"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "verify post e2e",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"status 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"post contains title\", function () {",
+                  "    pm.expect(pm.response.text()).to.include(\"E2E Post\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/posts/{{e2e_post_id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "posts",
+                "{{e2e_post_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "comment page e2e",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"status 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "const match = pm.response.text().match(/name=\"_csrf\" value=\"([^\"]+)\"/);",
+                  "",
+                  "if (match) {",
+                  "    pm.environment.set(\"e2e_comment_csrf\", match[1]);",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/posts/{{e2e_post_id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "posts",
+                "{{e2e_post_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "create comment e2e",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"status 302 after comment create\", function () {",
+                  "    pm.response.to.have.status(302);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "followRedirects": false
+          },
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "content",
+                  "value": "E2E Comment {{$timestamp}}",
+                  "type": "text",
+                  "uuid": "27ec6f71-461b-4587-8f46-e27721bac96a"
+                },
+                {
+                  "key": "_csrf",
+                  "value": "{{e2e_comment_csrf}}",
+                  "type": "text",
+                  "uuid": "5a2885e7-e392-4644-b384-24e057f81a48"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/posts/{{e2e_post_id}}/comments",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "posts",
+                "{{e2e_post_id}}",
+                "comments"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "verify comment e2e",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"status 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "",
+                  "pm.test(\"comment exists\", function () {",
+                  "    pm.expect(pm.response.text()).to.include(\"E2E Comment\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/posts/{{e2e_post_id}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "posts",
+                "{{e2e_post_id}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    },
+    {
+      "listen": "test",
+      "script": {
+        "type": "text/javascript",
+        "packages": {},
+        "requests": {},
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "csrfToken",
+      "value": ""
+    },
+    {
+      "key": "dynamicEmail",
+      "value": ""
+    },
+    {
+      "key": "dynamicName",
+      "value": ""
+    },
+    {
+      "key": "createdPostId",
+      "value": ""
+    },
+    {
+      "key": "uniqueTitle",
+      "value": ""
+    },
+    {
+      "key": "e2eEmail",
+      "value": ""
+    },
+    {
+      "key": "e2eName",
+      "value": ""
+    },
+    {
+      "key": "e2ePassword",
+      "value": "",
+      "type": "default"
+    },
+    {
+      "key": "uniqueContent",
+      "value": ""
+    }
+  ]
+}

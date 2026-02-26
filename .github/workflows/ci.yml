@@ -46,3 +46,21 @@ jobs:
         with:
           name: cucumber-report
           path: target/cucumber-report.html
+      - name: Set up Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Install npm dependencies
+        run: npm ci
+      - name: Start Spring Boot app
+        run: |
+          ./mvnw spring-boot:run &
+          sleep 20
+      - name: Run API tests
+        run: npm run api:test
+      - name: Upload Newman HTML report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: newman-api-report
+          path: reports/api-report.html

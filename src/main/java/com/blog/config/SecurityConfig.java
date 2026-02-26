@@ -22,23 +22,26 @@ public class SecurityConfig {
                 "/password/**",
                 "/error/**"
             ).permitAll()
-            .requestMatchers("/admin/**").denyAll()
+            .requestMatchers("/admin/**").hasRole("ADMIN")
             .anyRequest().authenticated()
         )
+
         .formLogin(form -> form
             .loginPage("/login")
+            .loginProcessingUrl("/login")
             .defaultSuccessUrl("/posts", true)
             .permitAll()
         )
+
         .logout(logout -> logout
+            .logoutUrl("/logout")
             .logoutSuccessUrl("/login?logout")
+            .invalidateHttpSession(true)
+            .deleteCookies("JSESSIONID")
+            .clearAuthentication(true)
             .permitAll()
         )
-        .exceptionHandling(ex -> ex
-            .accessDeniedHandler((request, response, accessDeniedException) ->
-                response.sendError(403)
-            )
-        )
+
         .sessionManagement(session ->
             session.sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
         );

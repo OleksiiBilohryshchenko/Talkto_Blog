@@ -29,6 +29,9 @@ It serves as a realistic foundation for exploring production-grade patterns in a
 - JUnit 5
 - Selenium
 - Cucumber
+- Postman
+- Newman (CLI API test runner)
+- Node.js (for API test execution)
 
 ---
 
@@ -184,6 +187,18 @@ Defaults:
 http://localhost:8080
 ```
 
+### Running API Tests
+
+Prerequisites:
+- Node.js 20+
+- Running Spring Boot application
+- Configured database
+
+Run:
+
+npm install
+npm run api:test
+
 ---
 
 ## Project Structure
@@ -232,6 +247,68 @@ src/main/java/com/blog
 ## Testing Strategy
 
 The project implements a multi-layer testing strategy aligned with real-world backend systems.
+
+### API Contract Testing
+
+- Postman collection with full endpoint coverage
+- Newman CLI execution
+- HTML reporting
+- CI-enforced API verification
+
+## API Testing (Postman + Newman)
+
+The project includes a fully automated API test suite built with Postman and executed via Newman CLI.
+
+### Coverage
+
+The test suite validates:
+
+- Public endpoints (registration, password reset, pages)
+- Protected endpoints (posts, profile, comments)
+- Security policy enforcement (403, redirects, CSRF validation)
+- Dynamic resource creation and ID extraction
+- Full E2E API flow (register → login → create post → comment → verify)
+
+The collection contains:
+
+- Helper scripts for session handling
+- Dynamic variable extraction
+- CSRF stabilization logic
+- No hardcoded resource IDs
+
+Total coverage:
+- 100+ requests
+- 90+ assertions
+- 0 test dependency coupling
+
+### Local Execution
+
+Run API tests locally:
+npm install
+npm run api:test
+
+An HTML report will be generated: reports/api-report.html
+
+
+### CI Integration
+
+API tests are executed automatically in GitHub Actions.
+
+Pipeline steps:
+
+1. Build Spring Boot application
+2. Start application
+3. Execute Newman test suite
+4. Generate HTML report
+5. Upload report as CI artifact
+
+CI guarantees:
+
+- Deterministic database state (Flyway)
+- Stable session authentication
+- CSRF validation consistency
+
+CI pipeline fails on any API regression.
 
 ### Unit Tests
 
@@ -297,6 +374,8 @@ The architecture is intentionally designed to allow extension with:
 - Centralized logging
 - Externalized configuration
 - CI/CD integration
+- Automated API verification via CI pipeline
+- HTML test reports for inspection
 
 ## Author
 

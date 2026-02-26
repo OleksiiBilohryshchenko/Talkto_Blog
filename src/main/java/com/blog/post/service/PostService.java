@@ -4,6 +4,7 @@ import com.blog.post.domain.Post;
 import com.blog.post.repository.PostRepository;
 import com.blog.user.domain.User;
 import java.util.List;
+import java.util.NoSuchElementException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,7 +48,7 @@ public class PostService {
 
   public Post findById(Long id) {
     return postRepository.findByIdWithAuthor(id)
-        .orElseThrow(() -> new IllegalArgumentException("Post not found"));
+        .orElseThrow(() -> new NoSuchElementException("Post not found"));
   }
 
   public List<Post> findByAuthorId(Long authorId) {
