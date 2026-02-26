@@ -10,6 +10,86 @@
       "name": "00 - Helpers",
       "item": [
         {
+          "name": "register helper",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const html = pm.response.text();",
+                  "const csrfMatch = html.match(/name=\"_csrf\".*?value=\"(.+?)\"/);",
+                  "if (csrfMatch) {",
+                  "    pm.collectionVariables.set(\"csrfToken\", csrfMatch[1]);",
+                  "}"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "register helper",
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "urlencoded",
+              "urlencoded": [
+                {
+                  "key": "name",
+                  "value": "TestUser",
+                  "type": "text",
+                  "uuid": "5cf8a9a4-e258-41dd-ad47-40cc8e2d4e82"
+                },
+                {
+                  "key": "email",
+                  "value": "{{testUserEmail}}",
+                  "type": "text",
+                  "uuid": "55bbc8bf-a4bd-497c-86b0-96ffd6bb6f0d"
+                },
+                {
+                  "key": "password",
+                  "value": "{{testUserPassword}}",
+                  "type": "text",
+                  "uuid": "f14b21b3-0642-4c91-9b82-955b520cc6b6"
+                },
+                {
+                  "key": "_csrf",
+                  "value": "{{csrfToken}}",
+                  "type": "text",
+                  "uuid": "9b726cc0-a874-435e-ab7b-07a39e8cd69d"
+                }
+              ]
+            },
+            "url": {
+              "raw": "{{baseUrl}}/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
           "name": "login helper",
           "event": [
             {
@@ -132,86 +212,6 @@
               ],
               "path": [
                 "login"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "register helper",
-          "event": [
-            {
-              "listen": "test",
-              "script": {
-                "exec": [
-                  "const html = pm.response.text();",
-                  "const csrfMatch = html.match(/name=\"_csrf\".*?value=\"(.+?)\"/);",
-                  "if (csrfMatch) {",
-                  "    pm.collectionVariables.set(\"csrfToken\", csrfMatch[1]);",
-                  "}"
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
-              }
-            }
-          ],
-          "request": {
-            "method": "GET",
-            "header": [],
-            "url": {
-              "raw": "{{baseUrl}}/register",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "register"
-              ]
-            }
-          },
-          "response": []
-        },
-        {
-          "name": "register helper",
-          "request": {
-            "method": "POST",
-            "header": [],
-            "body": {
-              "mode": "urlencoded",
-              "urlencoded": [
-                {
-                  "key": "name",
-                  "value": "{{dynamicName}}",
-                  "type": "text",
-                  "uuid": "5cf8a9a4-e258-41dd-ad47-40cc8e2d4e82"
-                },
-                {
-                  "key": "email",
-                  "value": "{{dynamicEmail}}",
-                  "type": "text",
-                  "uuid": "55bbc8bf-a4bd-497c-86b0-96ffd6bb6f0d"
-                },
-                {
-                  "key": "password",
-                  "value": "{{testUserPassword}}",
-                  "type": "text",
-                  "uuid": "f14b21b3-0642-4c91-9b82-955b520cc6b6"
-                },
-                {
-                  "key": "_csrf",
-                  "value": "{{csrfToken}}",
-                  "type": "text",
-                  "uuid": "9b726cc0-a874-435e-ab7b-07a39e8cd69d"
-                }
-              ]
-            },
-            "url": {
-              "raw": "{{baseUrl}}/register",
-              "host": [
-                "{{baseUrl}}"
-              ],
-              "path": [
-                "register"
               ]
             }
           },
