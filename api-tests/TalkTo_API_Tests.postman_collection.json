@@ -477,22 +477,7 @@
               "listen": "prerequest",
               "script": {
                 "exec": [
-                  "// 1. Generate unique email",
-                  "const uniqueEmail = `ci_${Date.now()}@mail.com`;",
-                  "pm.environment.set(\"dynamicEmail\", uniqueEmail);",
-                  "",
-                  "// 2. Fetch CSRF token",
-                  "pm.sendRequest({",
-                  "    url: pm.environment.get(\"baseUrl\") + \"/register\",",
-                  "    method: \"GET\"",
-                  "}, (err, res) => {",
-                  "    if (err) return;",
-                  "",
-                  "    const match = res.text().match(/name=\"_csrf\".*?value=\"(.+?)\"/);",
-                  "    if (match) {",
-                  "        pm.collectionVariables.set(\"csrfToken\", match[1]);",
-                  "    }",
-                  "});"
+                  ""
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -508,12 +493,13 @@
                   "});",
                   "",
                   "pm.test(\"Still on register form\", () => {",
-                  "    pm.expect(pm.response.text()).to.include('action=\"/register\"');",
+                  "    const body = pm.response.text();",
+                  "    pm.expect(body).to.include('action=\"/register\"');",
                   "});",
                   "",
                   "pm.test(\"Email field contains submitted value\", () => {",
                   "    const body = pm.response.text();",
-                  "    const sentEmail = pm.environment.get(\"dynamicEmail\");",
+                  "    const sentEmail = pm.collectionVariables.get(\"testUserEmail\");",
                   "",
                   "    pm.expect(body).to.include(sentEmail);",
                   "});"
@@ -541,13 +527,13 @@
                 },
                 {
                   "key": "email",
-                  "value": "{{dynamicEmail}}",
+                  "value": "{{testUserEmail}}",
                   "type": "text",
                   "uuid": "15a36a84-3c2b-40cc-b377-2864ab99ba6c"
                 },
                 {
                   "key": "password",
-                  "value": "test1234",
+                  "value": "{{testUserPassword}}",
                   "type": "text",
                   "uuid": "d881c011-e922-4d7f-b822-a6da5d837b61"
                 },
