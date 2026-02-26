@@ -54,8 +54,8 @@
                   "const uniqueEmail = `ci_${Date.now()}@mail.com`;",
                   "const password = \"test1234\";",
                   "",
-                  "pm.collectionVariables.set(\"testUserEmail\", uniqueEmail);",
-                  "pm.collectionVariables.set(\"testUserPassword\", password);"
+                  "pm.environment.set(\"testUserEmail\", uniqueEmail);",
+                  "pm.environment.set(\"testUserPassword\", password);"
                 ],
                 "type": "text/javascript",
                 "packages": {},
@@ -517,7 +517,7 @@
                   "",
                   "pm.test(\"Email field contains submitted value\", () => {",
                   "    const body = pm.response.text();",
-                  "    const sentEmail = pm.collectionVariables.get(\"testUserEmail\");",
+                  "    const sentEmail = pm.environment.get(\"testUserEmail\");;",
                   "",
                   "    pm.expect(body).to.include(sentEmail);",
                   "});"
