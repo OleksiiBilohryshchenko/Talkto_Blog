@@ -507,7 +507,9 @@
                   "});",
                   "",
                   "pm.test(\"Email field contains submitted value\", () => {",
-                  "    pm.expect(pm.response.text()).to.include('value=\"ci_test@mail.com\"');",
+                  "    const body = pm.response.text();",
+                  "    pm.expect(body).to.include('name=\"email\"');",
+                  "    pm.expect(body).to.include('ci_test@mail.com');",
                   "});"
                 ],
                 "type": "text/javascript",
