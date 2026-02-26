@@ -45,6 +45,24 @@
         },
         {
           "name": "register helper",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "// Generate deterministic test user for CI",
+                  "const uniqueEmail = `ci_${Date.now()}@mail.com`;",
+                  "const password = \"test1234\";",
+                  "",
+                  "pm.collectionVariables.set(\"testUserEmail\", uniqueEmail);",
+                  "pm.collectionVariables.set(\"testUserPassword\", password);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
           "request": {
             "method": "POST",
             "header": [],
