@@ -31,7 +31,8 @@ It serves as a realistic foundation for exploring production-grade patterns in a
 - Cucumber
 - Postman
 - Newman (CLI API test runner)
-- Node.js (for API test execution)
+- Node.js (for API tests and Playwright performance testing)
+- k6 (load testing)
 
 ---
 
@@ -248,6 +249,54 @@ src/main/java/com/blog
 
 The project implements a multi-layer testing strategy aligned with real-world backend systems.
 
+## Performance & Load Testing
+
+The application was tested under controlled load using k6 and browser-level lifecycle measurements via Playwright.
+
+### Load Profile
+
+- 10 RPS (constant arrival rate)
+- 30s ramp-up
+- 5 minutes steady load
+- 30s ramp-down
+
+Scenario distribution:
+
+- Read-only: 3 RPS
+- Read + Comment: 3 RPS
+- Create Post: 2 RPS
+- Update Profile: 2 RPS
+
+Total: 10 RPS
+
+### Backend Results (k6)
+
+- Total HTTP requests: 15,786
+- Failed requests: 0 (0.00%)
+- Average latency: 23.11 ms
+- p95 latency: 106.61 ms
+- p99 latency: 107.58 ms
+
+All defined thresholds were satisfied:
+- p(95) < 1500 ms
+- p(99) < 2000 ms
+- http_req_failed < 1%
+
+### Browser Lifecycle (Playwright)
+
+Measured:
+- DNS
+- TCP
+- TLS
+- TTFB
+- DOMContentLoaded
+- Load Event
+
+The combined approach ensures structured backend SLA validation and browser lifecycle visibility.
+
+Detailed results available in:
+docs/load-testing-report.md
+
 ### API Contract Testing
 
 - Postman collection with full endpoint coverage
@@ -375,7 +424,12 @@ The architecture is intentionally designed to allow extension with:
 - Externalized configuration
 - CI/CD integration
 - Automated API verification via CI pipeline
-- HTML test reports for inspection
+- HTML test reports for inspection 
+- Explicit load validation under 10 RPS profile
+- Measured backend latency under defined normal load (10 RPS)
+- Observed p95 latency ≈ 106 ms
+- Latency well below defined threshold limits
+- Separate browser lifecycle measurement to validate UX readiness
 
 ## Author
 

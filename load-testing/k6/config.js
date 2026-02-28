@@ -1,40 +1,83 @@
-// k6 load configuration for TalkTo Blog
-// Mixed traffic profile: 70% read, 30% write
-// Total load: 10 RPS
-
 export const options = {
-  scenarios: {
-    read_traffic: {
-      executor: 'ramping-arrival-rate',
-      startRate: 1,
-      timeUnit: '1s',
-      preAllocatedVUs: 20,
-      maxVUs: 50,
-      stages: [
-        { target: 7, duration: '30s' },   // 70% of 10 RPS
-        { target: 7, duration: '5m' },
-        { target: 0, duration: '30s' },
-      ],
-      exec: 'readScenario',
-    },
+  // Include extended percentile stats in the final summary output
+  summaryTrendStats: ['avg', 'min', 'med', 'max', 'p(90)', 'p(95)', 'p(99)'],
 
-    write_traffic: {
+  scenarios: {
+    read_only: {
       executor: 'ramping-arrival-rate',
       startRate: 1,
       timeUnit: '1s',
       preAllocatedVUs: 20,
       maxVUs: 50,
       stages: [
-        { target: 3, duration: '30s' },   // 30% of 10 RPS
+        // Ramp up to steady read traffic
+        { target: 3, duration: '30s' },
         { target: 3, duration: '5m' },
         { target: 0, duration: '30s' },
       ],
-      exec: 'writeScenario',
+      exec: 'readOnlyScenario',
+    },
+
+    read_comment: {
+      executor: 'ramping-arrival-rate',
+      startRate: 1,
+      timeUnit: '1s',
+      preAllocatedVUs: 20,
+      maxVUs: 50,
+      stages: [
+        // Mixed read + write interaction load
+        { target: 3, duration: '30s' },
+        { target: 3, duration: '5m' },
+        { target: 0, duration: '30s' },
+      ],
+      exec: 'readAndCommentScenario',
+    },
+
+    create_post: {
+      executor: 'ramping-arrival-rate',
+      startRate: 1,
+      timeUnit: '1s',
+      preAllocatedVUs: 20,
+      maxVUs: 50,
+      stages: [
+        // Write-heavy scenario (post creation)
+        { target: 2, duration: '30s' },
+        { target: 2, duration: '5m' },
+        { target: 0, duration: '30s' },
+      ],
+      exec: 'createPostScenario',
+    },
+
+    update_profile: {
+      executor: 'ramping-arrival-rate',
+      startRate: 1,
+      timeUnit: '1s',
+      preAllocatedVUs: 20,
+      maxVUs: 50,
+      stages: [
+        // Profile update workload
+        { target: 2, duration: '30s' },
+        { target: 2, duration: '5m' },
+        { target: 0, duration: '30s' },
+      ],
+      exec: 'updateProfileScenario',
     },
   },
 
   thresholds: {
+    // System reliability requirement: less than 1% request failure rate
     http_req_failed: ['rate<0.01'],
-    http_req_duration: ['p(95)<1500'],
+
+    // Global latency constraints (all HTTP requests)
+    http_req_duration: [
+      'p(95)<1500',
+      'p(99)<2000',
+    ],
+
+    // Latency constraints for successful responses only
+    'http_req_duration{expected_response:true}': [
+      'p(95)<1500',
+      'p(99)<2000',
+    ],
   },
 };
