@@ -4,7 +4,8 @@
   "description": "TalkTo is a Spring Boot–based web application that implements a secure blogging platform.",
   "main": "index.js",
   "scripts": {
-    "api:test": "newman run api-tests/TalkTo_API_Tests.postman_collection.json -e api-tests/TalkTo_Local.postman_environment.json -r cli,htmlextra --reporter-htmlextra-export reports/api-report.html"
+    "api:test": "newman run api-tests/TalkTo_API_Tests.postman_collection.json -e api-tests/TalkTo_Local.postman_environment.json -r cli,htmlextra --reporter-htmlextra-export reports/api-report.html",
+    "browser:perf": "node browser-tests/performance.js"
   },
   "repository": {
     "type": "git",
@@ -15,6 +16,7 @@
   "license": "ISC",
   "devDependencies": {
     "newman": "^6.2.2",
-    "newman-reporter-htmlextra": "^1.23.1"
+    "newman-reporter-htmlextra": "^1.23.1",
+    "playwright": "^1.58.2"
   }
 }
