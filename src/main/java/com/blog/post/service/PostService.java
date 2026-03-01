@@ -5,6 +5,8 @@ import com.blog.post.repository.PostRepository;
 import com.blog.user.domain.User;
 import java.util.List;
 import java.util.NoSuchElementException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,8 +44,29 @@ public class PostService {
     return postRepository.save(post);
   }
 
+  /**
+   * Backward-compatible method for tests.
+   */
   public List<Post> findAll() {
     return postRepository.findAllWithAuthor();
+  }
+
+  /**
+   * Production pagination method.
+   */
+  public Page<Post> findAll(int page, int size) {
+
+    if (page < 0) {
+      throw new IllegalArgumentException("Page index must not be negative");
+    }
+
+    if (size <= 0) {
+      throw new IllegalArgumentException("Page size must be greater than zero");
+    }
+
+    PageRequest pageable = PageRequest.of(page, size);
+
+    return postRepository.findAllByOrderByCreatedAtDesc(pageable);
   }
 
   public Post findById(Long id) {

@@ -6,16 +6,12 @@ import com.blog.post.service.PostService;
 import com.blog.user.domain.User;
 import com.blog.user.repository.UserRepository;
 import jakarta.validation.Valid;
-import java.util.List;
+import org.springframework.data.domain.Page;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/posts")
@@ -33,10 +29,22 @@ public class PostController {
     this.userRepository = userRepository;
   }
 
+  /**
+   * Returns paginated list of posts.
+   * Default page size = 20.
+   */
   @GetMapping
-  public String list(Model model) {
-    List<Post> posts = postService.findAll();
-    model.addAttribute("posts", posts);
+  public String list(
+      @RequestParam(defaultValue = "0") int page,
+      @RequestParam(defaultValue = "20") int size,
+      Model model) {
+
+    Page<Post> postsPage = postService.findAll(page, size);
+
+    model.addAttribute("posts", postsPage.getContent());
+    model.addAttribute("currentPage", page);
+    model.addAttribute("totalPages", postsPage.getTotalPages());
+
     return "posts/list";
   }
 

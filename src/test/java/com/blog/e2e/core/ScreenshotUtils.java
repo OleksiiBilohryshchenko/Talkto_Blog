@@ -7,6 +7,9 @@ import org.openqa.selenium.WebDriver;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 
@@ -18,17 +21,23 @@ public final class ScreenshotUtils {
 
         try {
             File src = ((TakesScreenshot) driver)
-                    .getScreenshotAs(OutputType.FILE);
+                .getScreenshotAs(OutputType.FILE);
 
             String timestamp = LocalDateTime.now()
-                    .format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss"));
+                .format(DateTimeFormatter.ofPattern("yyyyMMdd_HHmmss_SSS"));
 
-            File destination = new File(
-                    "target/screenshots/" + stepName + "_" + timestamp + ".png"
+            Path screenshotsDir = Paths.get("target", "screenshots");
+            Files.createDirectories(screenshotsDir);
+
+            Path destination = screenshotsDir.resolve(
+                stepName + "_" + timestamp + ".png"
             );
 
-            destination.getParentFile().mkdirs();
-            Files.copy(src.toPath(), destination.toPath());
+            Files.copy(
+                src.toPath(),
+                destination,
+                StandardCopyOption.REPLACE_EXISTING
+            );
 
         } catch (IOException e) {
             throw new RuntimeException("Screenshot failed", e);

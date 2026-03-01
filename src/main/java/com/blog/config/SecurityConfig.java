@@ -20,7 +20,8 @@ public class SecurityConfig {
                 "/login",
                 "/css/**",
                 "/password/**",
-                "/error/**"
+                "/error/**",
+                "/actuator/**"
             ).permitAll()
             .requestMatchers("/admin/**").hasRole("ADMIN")
             .anyRequest().authenticated()

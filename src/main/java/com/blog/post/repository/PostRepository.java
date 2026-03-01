@@ -3,6 +3,9 @@ package com.blog.post.repository;
 import com.blog.post.domain.Post;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -25,6 +28,9 @@ public interface PostRepository extends JpaRepository<Post, Long> {
       """)
   List<Post> findAllWithAuthor();
 
+  @EntityGraph(attributePaths = {"author"})
+  Page<Post> findAllByOrderByCreatedAtDesc(Pageable pageable);
+
   @Query("""
       SELECT p
       FROM Post p
@@ -33,5 +39,4 @@ public interface PostRepository extends JpaRepository<Post, Long> {
       ORDER BY p.createdAt DESC
       """)
   List<Post> findByAuthorId(@Param("authorId") Long authorId);
-
 }
