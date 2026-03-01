@@ -202,6 +202,10 @@ npm run api:test
 
 ---
 
+A stress_seed.sql script is included to pre-populate the database
+before stress testing to ensure consistent performance behavior
+independent of table size.
+
 ## Project Structure
 
 ```
@@ -330,6 +334,25 @@ Total coverage:
 - 90+ assertions
 - 0 test dependency coupling
 
+## Stress Testing
+
+The application was stress tested separately for:
+
+- Authorization throughput
+- Read operations
+- Post creation
+- Comment creation
+
+Testing was executed using k6 in Docker-isolated environment.
+
+Under extreme load (up to 1000 concurrent users):
+
+- Read and comment operations remained stable.
+- Post creation showed increased latency due to BCrypt password verification.
+- No request failures occurred during stress tests.
+
+Detailed results are documented in the laboratory report.
+
 ### Local Execution
 
 Run API tests locally:
@@ -430,6 +453,10 @@ The architecture is intentionally designed to allow extension with:
 - Observed p95 latency ≈ 106 ms
 - Latency well below defined threshold limits
 - Separate browser lifecycle measurement to validate UX readiness
+
+Load testing was executed using isolated Docker containers
+to reduce measurement distortion between the application
+and the load testing tool.
 
 ## Author
 
